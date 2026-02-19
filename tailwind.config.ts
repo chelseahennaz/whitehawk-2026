@@ -58,6 +58,8 @@ export default {
           dark: "hsl(var(--club-dark))",
           gold: "hsl(var(--club-gold))",
           surface: "hsl(var(--club-surface))",
+          nav: "hsl(var(--club-nav))",
+          ticker: "hsl(var(--club-ticker))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
