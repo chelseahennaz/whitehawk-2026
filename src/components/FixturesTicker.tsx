@@ -22,13 +22,13 @@ const FixturesTicker = () => {
 
         {items.map((_, i) =>
         <div key={i} className="flex items-center">
-            <span className="px-4 font-heading text-xs uppercase tracking-wide text-club-dark font-semibold flex items-center gap-2">
+            <span className="px-4 font-heading uppercase tracking-wide text-club-dark flex items-center gap-2 text-lg font-semibold">
               <span className="inline-block w-4 h-4 rounded-sm overflow-hidden">
                 <img alt="" className="w-full h-full object-contain" src="https://img.icons8.com/?size=100&id=2865&format=png&color=000000" />
               </span>
               {tickerText}
             </span>
-            <span className="px-4 font-heading text-xs uppercase tracking-wider text-club-red-dark font-bold">
+            <span className="px-4 font-heading uppercase tracking-wider text-club-red-dark font-bold text-lg">
               {shoutText}
             </span>
           </div>
