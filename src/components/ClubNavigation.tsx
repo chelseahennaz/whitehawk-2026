@@ -51,7 +51,7 @@ const DesktopNav = () => {
       <div className="bg-club-red-dark">
         <div className="container mx-auto flex items-center justify-between py-0 px-4">
           <Link to="/" className="flex items-center gap-3 py-2">
-            <img alt="Whitehawk FC" className="h-25 w-25 object-contain" src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png" />
+            <img alt="Whitehawk FC" className="h-15 w-15 object-contain" src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png" />
           </Link>
 
           <nav className="flex items-center gap-0">
