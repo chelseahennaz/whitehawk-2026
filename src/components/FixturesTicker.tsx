@@ -24,7 +24,7 @@ const FixturesTicker = () => {
         <div key={i} className="flex items-center">
             <span className="px-4 font-heading text-xs uppercase tracking-wide text-club-dark font-semibold flex items-center gap-2">
               <span className="inline-block w-4 h-4 rounded-sm overflow-hidden">
-                <img src="/favicon.ico" alt="" className="w-full h-full object-contain" />
+                <img alt="" className="w-full h-full object-contain" src="https://img.icons8.com/?size=100&id=2865&format=png&color=000000" />
               </span>
               {tickerText}
             </span>
