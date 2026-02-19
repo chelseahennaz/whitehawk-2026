@@ -2,20 +2,22 @@ import ClubNavigation from "@/components/ClubNavigation";
 import FixturesTicker from "@/components/FixturesTicker";
 import HeroSection from "@/components/HeroSection";
 import FixturesWidget from "@/components/FixturesWidget";
-import ClubStats from "@/components/ClubStats";
 import LatestNews from "@/components/LatestNews";
+import DiscoverSection from "@/components/DiscoverSection";
+import SponsorsBar from "@/components/SponsorsBar";
 import ClubFooter from "@/components/ClubFooter";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <FixturesTicker />
       <ClubNavigation />
-      <main className="pt-[88px] md:pt-[100px]">
+      <FixturesTicker />
+      <main className="pt-[64px] md:pt-[96px]">
         <HeroSection />
         <FixturesWidget />
-        <ClubStats />
         <LatestNews />
+        <DiscoverSection />
+        <SponsorsBar />
       </main>
       <ClubFooter />
     </div>
