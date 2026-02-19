@@ -26,10 +26,10 @@ const HeroSection = () => {
             <h2 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold uppercase text-primary-foreground text-shadow leading-tight">
               Welcome to
               <br />
-              <span className="text-primary">Your Club FC</span>
+              <span className="text-primary">Whitehawk FC</span>
             </h2>
             <p className="mt-4 text-primary-foreground/80 font-body text-sm md:text-base max-w-md">
-              The heart of non-league football. Pride, passion, and community since 1920.
+              The Hawks. Pride, passion, and community in East Brighton since 1945.
             </p>
           </motion.div>
         </div>
