@@ -7,7 +7,7 @@ const FixturesTicker = () => {
   const items = Array(6).fill(null);
 
   return (
-    <div className="fixed top-0 md:top-[34px] left-0 right-0 z-[55] bg-club-gold overflow-hidden h-7 flex items-center">
+    <div className="fixed top-0 md:top-[105px] left-0 right-0 z-[55] bg-club-gold overflow-hidden h-7 flex items-center">
       <motion.div
         className="flex items-center whitespace-nowrap"
         animate={{ x: ["0%", "-50%"] }}
@@ -16,12 +16,12 @@ const FixturesTicker = () => {
             repeat: Infinity,
             repeatType: "loop",
             duration: 25,
-            ease: "linear",
-          },
-        }}
-      >
-        {items.map((_, i) => (
-          <div key={i} className="flex items-center">
+            ease: "linear"
+          }
+        }}>
+
+        {items.map((_, i) =>
+        <div key={i} className="flex items-center">
             <span className="px-4 font-heading text-xs uppercase tracking-wide text-club-dark font-semibold flex items-center gap-2">
               <span className="inline-block w-4 h-4 rounded-sm overflow-hidden">
                 <img src="/favicon.ico" alt="" className="w-full h-full object-contain" />
@@ -32,10 +32,10 @@ const FixturesTicker = () => {
               {shoutText}
             </span>
           </div>
-        ))}
+        )}
       </motion.div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default FixturesTicker;
