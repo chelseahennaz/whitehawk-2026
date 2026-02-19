@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Trophy, TrendingUp, Target, Shield } from "lucide-react";
 
 const stats = [
-  { label: "League Position", value: "3rd", icon: Trophy, sub: "Northern Premier" },
+  { label: "League Position", value: "3rd", icon: Trophy, sub: "Isthmian Premier" },
   { label: "Played", value: "28", icon: Shield, sub: "W18 D5 L5" },
   { label: "Goals Scored", value: "54", icon: Target, sub: "Top scorers in division" },
   { label: "Form", value: "WWDWW", icon: TrendingUp, sub: "Last 5 matches" },

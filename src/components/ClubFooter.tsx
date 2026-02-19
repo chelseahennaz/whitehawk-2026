@@ -8,12 +8,12 @@ const ClubFooter = () => {
           <div className="flex items-start gap-3">
             <img src={clubBadge} alt="Club Badge" className="h-14 w-14 object-contain" />
             <div>
-              <h4 className="font-heading text-lg uppercase text-primary-foreground tracking-wider">
-                Your Club FC
+            <h4 className="font-heading text-lg uppercase text-primary-foreground tracking-wider">
+                Whitehawk FC
               </h4>
               <p className="text-primary-foreground/50 text-xs font-body mt-1">
-                The Red Ground, High Street<br />
-                Your Town, YT1 2AB
+                TerraPura Ground, East Brighton Park<br />
+                Brighton, BN2 5TS
               </p>
             </div>
           </div>
@@ -44,7 +44,7 @@ const ClubFooter = () => {
 
         <div className="border-t border-primary/10 mt-8 pt-6 text-center">
           <p className="text-primary-foreground/30 text-xs font-body">
-            © 2026 Your Club FC. All rights reserved.
+            © 2026 Whitehawk FC. All rights reserved.
           </p>
         </div>
       </div>

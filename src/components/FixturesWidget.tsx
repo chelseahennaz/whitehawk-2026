@@ -18,40 +18,40 @@ const fixtures: Fixture[] = [
     id: 1,
     date: "SAT 15 FEB",
     time: "15:00",
-    home: "Your Club FC",
-    away: "Riverside Town",
-    venue: "The Red Ground",
-    competition: "League",
+    home: "Whitehawk",
+    away: "Burgess Hill Town",
+    venue: "TerraPura Ground",
+    competition: "Isthmian League",
     result: "3 - 1",
   },
   {
     id: 2,
     date: "SAT 22 FEB",
     time: "15:00",
-    home: "Oakfield United",
-    away: "Your Club FC",
-    venue: "Oakfield Park",
-    competition: "League",
-    result: "0 - 2",
+    home: "Whitehawk",
+    away: "Cheshunt",
+    venue: "TerraPura Ground",
+    competition: "Isthmian League",
+    result: "P - P",
   },
   {
     id: 3,
     date: "SAT 1 MAR",
     time: "15:00",
-    home: "Your Club FC",
-    away: "Borough Athletic",
-    venue: "The Red Ground",
-    competition: "FA Vase",
+    home: "Whitehawk",
+    away: "Bowers & Pitsea",
+    venue: "TerraPura Ground",
+    competition: "Isthmian League",
     isNext: true,
   },
   {
     id: 4,
     date: "SAT 8 MAR",
     time: "15:00",
-    home: "Westham Rangers",
-    away: "Your Club FC",
-    venue: "Rangers Park",
-    competition: "League",
+    home: "Horsham",
+    away: "Whitehawk",
+    venue: "The Camping World Community Stadium",
+    competition: "Isthmian League",
   },
 ];
 
@@ -86,7 +86,7 @@ const FixtureCard = ({ fixture, index }: { fixture: Fixture; index: number }) =>
     <div className="flex items-center justify-between gap-2">
       <div className="flex-1 text-right">
         <p className={`font-heading text-sm uppercase tracking-wide ${
-          fixture.home === "Your Club FC" ? "text-primary font-bold" : "text-foreground"
+          fixture.home === "Whitehawk" ? "text-primary font-bold" : "text-foreground"
         }`}>
           {fixture.home}
         </p>
@@ -103,7 +103,7 @@ const FixtureCard = ({ fixture, index }: { fixture: Fixture; index: number }) =>
       </div>
       <div className="flex-1">
         <p className={`font-heading text-sm uppercase tracking-wide ${
-          fixture.away === "Your Club FC" ? "text-primary font-bold" : "text-foreground"
+          fixture.away === "Whitehawk" ? "text-primary font-bold" : "text-foreground"
         }`}>
           {fixture.away}
         </p>

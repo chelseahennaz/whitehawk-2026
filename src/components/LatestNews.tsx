@@ -13,24 +13,24 @@ interface NewsItem {
 const newsItems: NewsItem[] = [
   {
     id: 1,
-    title: "Dominant Display Sees Reds Through to Next Round",
-    excerpt: "A commanding performance saw the club progress in the FA Vase with a 3-1 victory at The Red Ground.",
+    title: "Whitehawk 3 Burgess Hill Town 1",
+    excerpt: "The Hawks secured a convincing home victory at the TerraPura Ground with three goals to one.",
     date: "15 Feb 2026",
     category: "Match Report",
   },
   {
     id: 2,
-    title: "New Signing Bolsters Midfield Options",
-    excerpt: "The club is delighted to announce the signing of a new midfielder ahead of the busy fixture period.",
+    title: "Burgess Hill Flashback",
+    excerpt: "A look back at some memorable encounters between the Hawks and Burgess Hill Town over the years.",
     date: "12 Feb 2026",
-    category: "Transfers",
+    category: "News",
   },
   {
     id: 3,
-    title: "Supporters' Club Annual Dinner Announced",
-    excerpt: "Join us for the annual supporters' dinner at the clubhouse on March 15th. Tickets now available.",
-    date: "10 Feb 2026",
-    category: "Club News",
+    title: "Hawks v Cheshunt Game Off Again",
+    excerpt: "The Isthmian League fixture against Cheshunt has been postponed for a second time due to a waterlogged pitch.",
+    date: "9 Jan 2026",
+    category: "Men's Team",
   },
 ];
 

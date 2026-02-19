@@ -6,8 +6,8 @@ import clubBadge from "@/assets/club-badge.png";
 
 const navItems = [
   { label: "Home", path: "/", icon: Home },
-  { label: "Fixtures", path: "/fixtures", icon: Calendar },
   { label: "News", path: "/news", icon: Newspaper },
+  { label: "Fixtures", path: "/fixtures", icon: Calendar },
   { label: "Squad", path: "/squad", icon: Users },
 ];
 
@@ -15,17 +15,17 @@ const DesktopNav = () => {
   const location = useLocation();
 
   return (
-    <header className="hidden md:block fixed top-0 left-0 right-0 z-50">
+    <header className="hidden md:block fixed top-[28px] left-0 right-0 z-50">
       <div className="club-gradient">
         <div className="container mx-auto flex items-center justify-between py-3 px-4">
           <Link to="/" className="flex items-center gap-3">
             <img src={clubBadge} alt="Club Badge" className="h-12 w-12 object-contain" />
             <div>
               <h1 className="font-heading text-xl font-bold uppercase text-primary-foreground tracking-wider">
-                Your Club FC
+                Whitehawk FC
               </h1>
               <p className="text-xs text-primary-foreground/70 font-body tracking-wide">
-                Est. 1920
+                Est. 1945
               </p>
             </div>
           </Link>
@@ -59,12 +59,12 @@ const MobileNav = () => {
   return (
     <>
       {/* Mobile top bar */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 club-gradient">
+      <header className="md:hidden fixed top-[28px] left-0 right-0 z-50 club-gradient">
         <div className="flex items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2">
             <img src={clubBadge} alt="Club Badge" className="h-9 w-9 object-contain" />
             <span className="font-heading text-lg font-bold uppercase text-primary-foreground tracking-wider">
-              Your Club FC
+              Whitehawk FC
             </span>
           </Link>
           <button
@@ -83,7 +83,7 @@ const MobileNav = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden fixed top-[60px] left-0 right-0 z-40 bg-club-dark/95 backdrop-blur-sm border-b border-primary/20"
+            className="md:hidden fixed top-[88px] left-0 right-0 z-40 bg-club-dark/95 backdrop-blur-sm border-b border-primary/20"
           >
             {navItems.map((item) => (
               <Link
