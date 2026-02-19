@@ -28,7 +28,7 @@ const FixturesTicker = () => {
               </span>
               {tickerText}
             </span>
-            <span className="px-4 font-heading uppercase tracking-wider text-club-red-dark font-bold text-lg">
+            <span className="px-4 font-heading uppercase tracking-wider text-club-red-dark font-bold text-lg bg-popover-foreground text-club-gold">
               {shoutText}
             </span>
           </div>
