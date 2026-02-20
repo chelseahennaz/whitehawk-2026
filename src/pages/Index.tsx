@@ -12,7 +12,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <ClubNavigation />
       <FixturesTicker />
-      <main className="pt-[64px] md:pt-[96px]">
+      <main className="pt-[84px] md:pt-[124px]">
         <HeroSection />
         <FixturesWidget />
         <LatestNews />
