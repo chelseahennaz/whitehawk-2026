@@ -7,7 +7,7 @@ const FixturesTicker = () => {
   const items = Array(6).fill(null);
 
   return (
-    <div className="fixed top-0 md:top-[103px] left-0 right-0 z-[55] bg-club-gold overflow-hidden h-7 flex items-center">
+    <div className="fixed top-[56px] md:top-[96px] left-0 right-0 z-[45] bg-club-gold overflow-hidden h-7 flex items-center">
       <motion.div
         className="flex items-center whitespace-nowrap"
         animate={{ x: ["0%", "-50%"] }}

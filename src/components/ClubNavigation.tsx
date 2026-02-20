@@ -13,19 +13,16 @@ const navItems = [
 { label: "Tickets", path: "/tickets" },
 { label: "Contact", path: "/contact" }];
 
-
 const utilityLinks = [
 { label: "Hire Our Pitch", path: "/hire-pitch" },
 { label: "Hire Our Clubhouse", path: "/hire-clubhouse" },
 { label: "Sponsor Pack", path: "/sponsor" }];
-
 
 const socialIcons = [
 { Icon: Facebook, href: "https://facebook.com/whitehawkfc", label: "Facebook" },
 { Icon: Instagram, href: "https://instagram.com/whitehawkfc", label: "Instagram" },
 { Icon: Twitter, href: "https://twitter.com/whitehawkfc", label: "X" },
 { Icon: Youtube, href: "https://youtube.com/@whitehawkfc", label: "YouTube" }];
-
 
 const DesktopNav = () => {
   const location = useLocation();
@@ -40,33 +37,39 @@ const DesktopNav = () => {
             key={link.path}
             to={link.path}
             className="text-[11px] font-heading uppercase tracking-widest text-primary-foreground/60 hover:text-primary-foreground transition-colors">
-
-              {link.label}
-            </Link>
+            {link.label}
+          </Link>
           )}
         </div>
       </div>
 
       {/* Main nav */}
-      <div className="bg-club-red-dark">
+      <div className="bg-club-red-dark relative">
         <div className="container mx-auto flex items-center justify-between py-0 px-4">
-          <Link to="/" className="flex items-center gap-3 py-2">
-            <img alt="Whitehawk FC" className="h-14 w-14 object-contain" src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png" />
+          {/* Logo — overlapping utility bar and ticker */}
+          <Link to="/" className="absolute left-4 -top-6 z-[60] flex items-center">
+            <img
+              alt="Whitehawk FC"
+              className="h-24 w-24 object-contain drop-shadow-lg"
+              src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png"
+            />
           </Link>
+
+          {/* Spacer for logo */}
+          <div className="w-28" />
 
           <nav className="flex items-center gap-0">
             {navItems.map((item) =>
             <Link
               key={item.path}
               to={item.path}
-              className={`px-5 py-5 font-heading text-sm uppercase tracking-wider transition-colors border-b-2 ${
+              className={`px-5 py-5 font-heading text-base uppercase tracking-wider transition-colors border-b-3 ${
               location.pathname === item.path ?
               "border-club-gold text-primary-foreground" :
               "border-transparent text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/5"}`
               }>
-
-                {item.label}
-              </Link>
+              {item.label}
+            </Link>
             )}
           </nav>
 
@@ -80,15 +83,13 @@ const DesktopNav = () => {
               rel="noopener noreferrer"
               className="p-2 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
               aria-label={label}>
-
-                <Icon size={16} />
-              </a>
+              <Icon size={18} />
+            </a>
             )}
           </div>
         </div>
       </div>
     </header>);
-
 };
 
 const MobileNav = () => {
@@ -98,9 +99,9 @@ const MobileNav = () => {
   return (
     <>
       <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-club-red-dark">
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center justify-between px-4 py-2">
           <Link to="/" className="flex items-center gap-2">
-            <img src={clubBadge} alt="Whitehawk FC" className="h-10 w-10 object-contain" />
+            <img src={clubBadge} alt="Whitehawk FC" className="h-12 w-12 object-contain" />
             <span className="font-heading text-lg font-bold uppercase text-primary-foreground tracking-wider">
               Whitehawk FC
             </span>
@@ -108,7 +109,6 @@ const MobileNav = () => {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="text-primary-foreground p-1">
-
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -121,7 +121,6 @@ const MobileNav = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           className="md:hidden fixed top-[64px] left-0 right-0 z-40 bg-club-dark/95 backdrop-blur-sm border-b border-primary/20">
-
             {navItems.map((item) =>
           <Link
             key={item.path}
@@ -132,7 +131,6 @@ const MobileNav = () => {
             "text-club-gold bg-primary/10" :
             "text-primary-foreground/80"}`
             }>
-
                 {item.label}
               </Link>
           )}
@@ -145,7 +143,6 @@ const MobileNav = () => {
               rel="noopener noreferrer"
               className="p-2 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
               aria-label={label}>
-
                   <Icon size={18} />
                 </a>
             )}
@@ -166,17 +163,14 @@ const MobileNav = () => {
                 className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors ${
                 isActive ? "text-primary" : "text-muted-foreground"}`
                 }>
-
                 <span className="text-[10px] font-heading uppercase tracking-wider">
                   {item.label}
                 </span>
               </Link>);
-
           })}
         </div>
       </nav>
     </>);
-
 };
 
 const ClubNavigation = () =>
@@ -184,6 +178,5 @@ const ClubNavigation = () =>
     <DesktopNav />
     <MobileNav />
   </>;
-
 
 export default ClubNavigation;
