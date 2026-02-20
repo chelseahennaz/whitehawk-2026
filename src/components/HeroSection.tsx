@@ -13,6 +13,16 @@ interface Slide {
   image: string;
 }
 
+// Next fixture data (shared with FixturesWidget)
+const nextFixture = {
+  opponent: "Bowers & Pitsea",
+  date: "Saturday 1 Mar 2026",
+  time: "3:00pm",
+  venue: "TerraPura Ground",
+  homeAway: "H" as const,
+  competition: "Isthmian League South East",
+};
+
 const slides: Slide[] = [
 {
   id: 1,
@@ -25,11 +35,11 @@ const slides: Slide[] = [
 },
 {
   id: 2,
-  subtitle: "The Hawks",
-  title: "A Club For All",
-  description: "Men's, Women's, Youth and Walking Football — everyone is welcome",
-  cta: "Club History",
-  ctaLink: "/club",
+  subtitle: `Next Match · ${nextFixture.date}`,
+  title: nextFixture.opponent,
+  description: `${nextFixture.homeAway === "H" ? "Home" : "Away"} · ${nextFixture.time} · ${nextFixture.venue}`,
+  cta: "Buy Tickets",
+  ctaLink: "/tickets",
   image: heroImage
 },
 {

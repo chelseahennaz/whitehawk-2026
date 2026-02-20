@@ -152,7 +152,12 @@ const FixturesWidget = () => {
               </a>
             </div>
             <div className="bg-card border border-border rounded-lg overflow-hidden">
-              {fixtures.map((fixture) =>
+              {/* Upcoming fixtures first */}
+              {fixtures.filter(f => !f.result).map((fixture) =>
+              <FixtureRow key={fixture.id} fixture={fixture} />
+              )}
+              {/* Then past results */}
+              {fixtures.filter(f => !!f.result).map((fixture) =>
               <FixtureRow key={fixture.id} fixture={fixture} />
               )}
             </div>
