@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import heroImage from "@/assets/hero-stadium.jpg";
+import { ChevronLeft, ChevronRight, ExternalLink, Pause, Play } from "lucide-react";
+import heroMatch from "@/assets/hero-match.jpg";
+import heroFans from "@/assets/hero-fans.jpg";
+import heroGround from "@/assets/hero-ground.jpg";
 
 interface Slide {
   id: number;
@@ -13,7 +15,6 @@ interface Slide {
   image: string;
 }
 
-// Next fixture data (shared with FixturesWidget)
 const nextFixture = {
   opponent: "Bowers & Pitsea",
   date: "Saturday 1 Mar 2026",
@@ -24,45 +25,47 @@ const nextFixture = {
 };
 
 const slides: Slide[] = [
-{
-  id: 1,
-  subtitle: "Welcome to",
-  title: "Whitehawk FC",
-  description: "Pride, passion, and community in East Brighton since 1945",
-  cta: "First Team",
-  ctaLink: "/teams",
-  image: heroImage
-},
-{
-  id: 2,
-  subtitle: `Next Match · ${nextFixture.date}`,
-  title: nextFixture.opponent,
-  description: `${nextFixture.homeAway === "H" ? "Home" : "Away"} · ${nextFixture.time} · ${nextFixture.venue}`,
-  cta: "Buy Tickets",
-  ctaLink: "/tickets",
-  image: heroImage
-},
-{
-  id: 3,
-  subtitle: "Match Day",
-  title: "TerraPura Ground",
-  description: "Come and support the Hawks at our East Brighton home",
-  cta: "Tickets",
-  ctaLink: "/tickets",
-  image: heroImage
-}];
-
+  {
+    id: 1,
+    subtitle: "Welcome to",
+    title: "Whitehawk FC",
+    description: "Pride, passion, and community in East Brighton since 1945",
+    cta: "First Team",
+    ctaLink: "/teams",
+    image: heroMatch,
+  },
+  {
+    id: 2,
+    subtitle: `Next Match · ${nextFixture.date}`,
+    title: nextFixture.opponent,
+    description: `${nextFixture.homeAway === "H" ? "Home" : "Away"} · ${nextFixture.time} · ${nextFixture.venue}`,
+    cta: "Buy Tickets",
+    ctaLink: "/tickets",
+    image: heroFans,
+  },
+  {
+    id: 3,
+    subtitle: "Match Day",
+    title: "TerraPura Ground",
+    description: "Come and support the Hawks at our East Brighton home",
+    cta: "Tickets",
+    ctaLink: "/tickets",
+    image: heroGround,
+  },
+];
 
 const HeroSection = () => {
   const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), []);
   const prev = useCallback(() => setCurrent((c) => (c - 1 + slides.length) % slides.length), []);
 
   useEffect(() => {
+    if (paused) return;
     const timer = setInterval(next, 6000);
     return () => clearInterval(timer);
-  }, [next]);
+  }, [next, paused]);
 
   const slide = slides[current];
 
@@ -76,8 +79,8 @@ const HeroSection = () => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${slide.image})` }} />
-
+          style={{ backgroundImage: `url(${slide.image})` }}
+        />
       </AnimatePresence>
 
       <div className="absolute inset-0 bg-gradient-to-r from-club-dark/80 via-club-dark/40 to-transparent" />
@@ -92,12 +95,12 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="max-w-2xl">
-
+              className="max-w-2xl"
+            >
               <p className="font-heading text-base md:text-lg uppercase tracking-widest text-club-gold text-shadow mb-2">
                 {slide.subtitle}
               </p>
-              <h2 className="font-Poppins text-5xl md:text-7xl lg:text-8xl font-bold uppercase text-primary-foreground text-shadow-heavy leading-none">
+              <h2 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold uppercase text-primary-foreground text-shadow-heavy leading-none">
                 {slide.title}
               </h2>
               <p className="mt-4 text-primary-foreground/80 font-body text-sm md:text-lg max-w-md">
@@ -105,8 +108,8 @@ const HeroSection = () => {
               </p>
               <a
                 href={slide.ctaLink}
-                className="inline-flex items-center gap-2 mt-6 bg-club-gold text-club-dark font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-sm hover:bg-primary-foreground transition-colors font-semibold">
-
+                className="inline-flex items-center gap-2 mt-6 bg-club-gold text-club-dark font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-sm hover:bg-primary-foreground transition-colors font-semibold"
+              >
                 {slide.cta}
                 <ExternalLink size={14} />
               </a>
@@ -119,32 +122,39 @@ const HeroSection = () => {
       <div className="absolute bottom-8 left-4 md:left-8 flex items-center gap-2">
         <button
           onClick={prev}
-          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm">
-
+          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm"
+        >
           <ChevronLeft size={20} />
         </button>
         <button
           onClick={next}
-          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm">
-
+          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm"
+        >
           <ChevronRight size={20} />
+        </button>
+        <button
+          onClick={() => setPaused((p) => !p)}
+          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm"
+          aria-label={paused ? "Play slideshow" : "Pause slideshow"}
+        >
+          {paused ? <Play size={16} /> : <Pause size={16} />}
         </button>
       </div>
 
       {/* Slide indicators */}
       <div className="absolute bottom-8 right-4 md:right-8 flex items-center gap-2">
-        {slides.map((_, i) =>
-        <button
-          key={i}
-          onClick={() => setCurrent(i)}
-          className={`w-2.5 h-2.5 rounded-full transition-colors ${
-          i === current ? "bg-club-gold" : "bg-primary-foreground/30"}`
-          } />
-
-        )}
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`w-2.5 h-2.5 rounded-full transition-colors ${
+              i === current ? "bg-club-gold" : "bg-primary-foreground/30"
+            }`}
+          />
+        ))}
       </div>
-    </section>);
-
+    </section>
+  );
 };
 
 export default HeroSection;

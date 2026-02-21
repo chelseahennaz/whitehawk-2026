@@ -15,7 +15,7 @@ const FixturesTicker = () => {
           x: {
             repeat: Infinity,
             repeatType: "loop",
-            duration: 25,
+            duration: 45,
             ease: "linear"
           }
         }}>
