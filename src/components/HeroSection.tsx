@@ -1,157 +1,160 @@
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, ExternalLink, Pause, Play } from "lucide-react";
-import heroMatch from "@/assets/hero-match.jpg";
-import heroFans from "@/assets/hero-fans.jpg";
-import heroGround from "@/assets/hero-ground.jpg";
-
-interface Slide {
-  id: number;
-  subtitle: string;
-  title: string;
-  description: string;
-  cta: string;
-  ctaLink: string;
-  image: string;
-}
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Ticket } from "lucide-react";
 
 const nextFixture = {
+  competition: "Isthmian League South East",
   opponent: "Bowers & Pitsea",
-  date: "Saturday 1 Mar 2026",
-  time: "3:00pm",
+  opponentShort: "B&P",
+  date: "Saturday 1 March 2025",
+  time: "3:00 PM",
   venue: "TerraPura Ground",
   homeAway: "H" as const,
-  competition: "Isthmian League South East",
 };
 
-const slides: Slide[] = [
-  {
-    id: 1,
-    subtitle: "Welcome to",
-    title: "Whitehawk FC",
-    description: "Pride, passion, and community in East Brighton since 1945",
-    cta: "First Team",
-    ctaLink: "/teams",
-    image: heroMatch,
-  },
-  {
-    id: 2,
-    subtitle: `Next Match · ${nextFixture.date}`,
-    title: nextFixture.opponent,
-    description: `${nextFixture.homeAway === "H" ? "Home" : "Away"} · ${nextFixture.time} · ${nextFixture.venue}`,
-    cta: "Buy Tickets",
-    ctaLink: "/tickets",
-    image: heroFans,
-  },
-  {
-    id: 3,
-    subtitle: "Match Day",
-    title: "TerraPura Ground",
-    description: "Come and support the Hawks at our East Brighton home",
-    cta: "Tickets",
-    ctaLink: "/tickets",
-    image: heroGround,
-  },
-];
+const getCountdown = () => {
+  const target = new Date("2025-03-01T15:00:00");
+  const now = new Date();
+  const diff = target.getTime() - now.getTime();
+  if (diff <= 0) return { days: 0, hours: 0, mins: 0, secs: 0 };
+  return {
+    days: Math.floor(diff / 86400000),
+    hours: Math.floor((diff % 86400000) / 3600000),
+    mins: Math.floor((diff % 3600000) / 60000),
+    secs: Math.floor((diff % 60000) / 1000),
+  };
+};
+
+const CountdownDigit = ({ value, label }: { value: number; label: string }) => (
+  <div className="flex flex-col items-center">
+    <div className="flex gap-1">
+      {String(value).padStart(2, "0").split("").map((d, i) => (
+        <span
+          key={i}
+          className="w-9 h-12 md:w-12 md:h-16 flex items-center justify-center bg-primary-foreground/10 rounded-md font-heading text-2xl md:text-3xl font-bold text-primary-foreground"
+        >
+          {d}
+        </span>
+      ))}
+    </div>
+    <span className="text-[10px] md:text-xs uppercase tracking-wider text-primary-foreground/50 mt-1 font-heading">
+      {label}
+    </span>
+  </div>
+);
 
 const HeroSection = () => {
-  const [current, setCurrent] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), []);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + slides.length) % slides.length), []);
+  const [countdown, setCountdown] = useState(getCountdown);
 
   useEffect(() => {
-    if (paused) return;
-    const timer = setInterval(next, 6000);
+    const timer = setInterval(() => setCountdown(getCountdown()), 1000);
     return () => clearInterval(timer);
-  }, [next, paused]);
-
-  const slide = slides[current];
+  }, []);
 
   return (
-    <section className="relative h-[70vh] md:h-[85vh] overflow-hidden bg-club-dark">
-      <AnimatePresence mode="wait">
+    <section className="relative bg-club-dark overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 20% 50%, hsl(var(--club-red)) 0%, transparent 50%), radial-gradient(circle at 80% 50%, hsl(var(--club-red)) 0%, transparent 50%)`
+        }} />
+      </div>
+
+      <div className="relative container mx-auto px-4 py-10 md:py-16">
+        {/* Competition */}
+        <motion.p
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center font-heading text-xs md:text-sm uppercase tracking-[0.2em] text-club-gold mb-1"
+        >
+          {nextFixture.competition}
+        </motion.p>
+
+        {/* Date & Time */}
         <motion.div
-          key={slide.id}
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${slide.image})` }}
-        />
-      </AnimatePresence>
-
-      <div className="absolute inset-0 bg-gradient-to-r from-club-dark/80 via-club-dark/40 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-club-dark/60 via-transparent to-transparent" />
-
-      <div className="relative h-full flex items-center">
-        <div className="container mx-auto px-4">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={slide.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="max-w-2xl"
-            >
-              <p className="font-heading text-base md:text-lg uppercase tracking-widest text-club-gold text-shadow mb-2">
-                {slide.subtitle}
-              </p>
-              <h2 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold uppercase text-primary-foreground text-shadow-heavy leading-none">
-                {slide.title}
-              </h2>
-              <p className="mt-4 text-primary-foreground/80 font-body text-sm md:text-lg max-w-md">
-                {slide.description}
-              </p>
-              <a
-                href={slide.ctaLink}
-                className="inline-flex items-center gap-2 mt-6 bg-club-gold text-club-dark font-heading text-sm uppercase tracking-wider px-6 py-3 rounded-sm hover:bg-primary-foreground transition-colors font-semibold"
-              >
-                {slide.cta}
-                <ExternalLink size={14} />
-              </a>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Slide controls */}
-      <div className="absolute bottom-8 left-4 md:left-8 flex items-center gap-2">
-        <button
-          onClick={prev}
-          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-center mb-8 md:mb-10"
         >
-          <ChevronLeft size={20} />
-        </button>
-        <button
-          onClick={next}
-          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm"
-        >
-          <ChevronRight size={20} />
-        </button>
-        <button
-          onClick={() => setPaused((p) => !p)}
-          className="w-10 h-10 flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/70 hover:bg-primary-foreground/10 transition-colors rounded-sm"
-          aria-label={paused ? "Play slideshow" : "Pause slideshow"}
-        >
-          {paused ? <Play size={16} /> : <Pause size={16} />}
-        </button>
-      </div>
+          <p className="text-primary-foreground/60 font-body text-sm">{nextFixture.date}</p>
+          <p className="font-heading text-4xl md:text-5xl font-bold text-primary-foreground mt-1">
+            {nextFixture.time}
+          </p>
+          <p className="text-primary-foreground/50 font-body text-xs md:text-sm mt-1">{nextFixture.venue}</p>
+        </motion.div>
 
-      {/* Slide indicators */}
-      <div className="absolute bottom-8 right-4 md:right-8 flex items-center gap-2">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            className={`w-2.5 h-2.5 rounded-full transition-colors ${
-              i === current ? "bg-club-gold" : "bg-primary-foreground/30"
-            }`}
-          />
-        ))}
+        {/* Teams */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center justify-center gap-6 md:gap-16 mb-8 md:mb-12"
+        >
+          {/* Home team */}
+          <div className="flex flex-col items-center gap-3 min-w-[100px] md:min-w-[160px]">
+            <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center overflow-hidden">
+              <img
+                src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png"
+                alt="Whitehawk FC"
+                className="w-16 h-16 md:w-24 md:h-24 object-contain"
+              />
+            </div>
+            <span className="font-heading text-xs md:text-sm uppercase tracking-wider text-primary-foreground text-center leading-tight">
+              Whitehawk FC
+            </span>
+          </div>
+
+          {/* VS */}
+          <div className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground/20">
+            VS
+          </div>
+
+          {/* Away team */}
+          <div className="flex flex-col items-center gap-3 min-w-[100px] md:min-w-[160px]">
+            <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-primary-foreground/5 border border-primary-foreground/10 flex items-center justify-center">
+              <span className="font-heading text-2xl md:text-3xl font-bold text-primary-foreground/40">
+                {nextFixture.opponentShort}
+              </span>
+            </div>
+            <span className="font-heading text-xs md:text-sm uppercase tracking-wider text-primary-foreground text-center leading-tight">
+              {nextFixture.opponent}
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Countdown */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-center gap-3 md:gap-4 mb-8 md:mb-10"
+        >
+          <CountdownDigit value={countdown.days} label="Days" />
+          <span className="text-primary-foreground/30 font-heading text-2xl md:text-3xl font-bold mt-[-16px]">:</span>
+          <CountdownDigit value={countdown.hours} label="Hrs" />
+          <span className="text-primary-foreground/30 font-heading text-2xl md:text-3xl font-bold mt-[-16px]">:</span>
+          <CountdownDigit value={countdown.mins} label="Mins" />
+          <span className="text-primary-foreground/30 font-heading text-2xl md:text-3xl font-bold mt-[-16px]">:</span>
+          <CountdownDigit value={countdown.secs} label="Secs" />
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="flex justify-center"
+        >
+          <Link
+            to="/matches"
+            className="inline-flex items-center gap-3 bg-club-gold hover:bg-club-gold/90 text-club-dark font-heading text-sm md:text-base uppercase tracking-wider px-8 md:px-12 py-3.5 md:py-4 rounded-sm transition-colors font-semibold"
+          >
+            <Ticket size={18} />
+            Match Centre
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
