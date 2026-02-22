@@ -28,7 +28,7 @@ const DesktopNav = () => {
   const location = useLocation();
 
   return (
-    <header className="hidden md:block fixed top-0 left-0 right-0 z-50">
+    <header className="hidden lg:block fixed top-0 left-0 right-0 z-50">
       {/* Utility bar */}
       <div className="bg-club-dark">
         <div className="container mx-auto flex items-center justify-end gap-4 py-1.5 px-4">
@@ -98,7 +98,7 @@ const MobileNav = () => {
 
   return (
     <>
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-club-red-dark">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-club-red-dark">
         <div className="flex items-center justify-between px-4 py-2">
           <Link to="/" className="flex items-center gap-2">
             <img src={clubBadge} alt="Whitehawk FC" className="h-12 w-12 object-contain" />
@@ -120,7 +120,7 @@ const MobileNav = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="md:hidden fixed top-[64px] left-0 right-0 z-40 bg-club-dark/95 backdrop-blur-sm border-b border-primary/20">
+          className="lg:hidden fixed top-[64px] left-0 right-0 z-40 bg-club-dark/95 backdrop-blur-sm border-b border-primary/20">
             {navItems.map((item) =>
           <Link
             key={item.path}
@@ -152,7 +152,7 @@ const MobileNav = () => {
       </AnimatePresence>
 
       {/* Mobile bottom tab bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-club-dark border-t border-primary/20 safe-area-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-club-dark border-t border-primary/20 safe-area-bottom">
         <div className="flex items-center justify-around py-2 pb-[env(safe-area-inset-bottom)]">
           {navItems.slice(0, 5).map((item) => {
             const isActive = location.pathname === item.path;
