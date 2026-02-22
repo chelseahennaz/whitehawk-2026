@@ -53,7 +53,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative bg-club-dark overflow-hidden">
+    <section className="relative club-gradient overflow-hidden">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
