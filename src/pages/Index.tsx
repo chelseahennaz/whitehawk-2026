@@ -12,7 +12,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <ClubNavigation />
       <FixturesTicker />
-      <main className="pt-[84px] lg:pt-[124px] bg-secondary-foreground">
+      <main className="pt-[84px] lg:pt-[124px]">
         <HeroSection />
         <FixturesWidget />
         <LatestNews />
@@ -20,8 +20,8 @@ const Index = () => {
         <SponsorsBar />
       </main>
       <ClubFooter />
-    </div>);
-
+    </div>
+  );
 };
 
 export default Index;
