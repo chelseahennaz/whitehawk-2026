@@ -53,10 +53,10 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative club-gradient overflow-hidden">
+    <section className="relative club-gradient overflow-hidden bg-secondary-foreground">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
+        <div className="absolute inset-0 bg-secondary-foreground" style={{
           backgroundImage: `radial-gradient(circle at 20% 50%, hsl(var(--club-red)) 0%, transparent 50%), radial-gradient(circle at 80% 50%, hsl(var(--club-red)) 0%, transparent 50%)`
         }} />
       </div>
