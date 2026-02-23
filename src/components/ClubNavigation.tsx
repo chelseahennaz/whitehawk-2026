@@ -100,9 +100,13 @@ const MobileNav = () => {
     <>
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-club-red-dark">
         <div className="flex items-center justify-between px-4 py-2">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={clubBadge} alt="Whitehawk FC" className="h-12 w-12 object-contain" />
-            <span className="font-heading text-lg font-bold uppercase text-primary-foreground tracking-wider">
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png"
+              alt="Whitehawk FC"
+              className="h-11 w-11 object-contain"
+            />
+            <span className="font-heading text-sm font-semibold uppercase text-primary-foreground tracking-widest">
               Whitehawk FC
             </span>
           </Link>
