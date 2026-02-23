@@ -1,7 +1,6 @@
-import { ChevronRight, MapPin, Calendar } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import clubBadge from "@/assets/club-badge.png";
 import { motion } from "framer-motion";
-import { useState } from "react";
 
 interface Fixture {
   id: number;
@@ -9,7 +8,6 @@ interface Fixture {
   homeAway: "H" | "A";
   competition: string;
   opponent: string;
-  opponentLogo?: string;
   venue: string;
   time?: string;
   homeScore?: number;
@@ -19,131 +17,114 @@ interface Fixture {
 }
 
 const fixtures: Fixture[] = [
-  { id: 3, date: "Sat 1 Mar", homeAway: "H", competition: "League", opponent: "Bowers & Pitsea", venue: "TerraPura Ground", time: "3:00pm", isNext: true },
-  { id: 4, date: "Sat 8 Mar", homeAway: "A", competition: "League", opponent: "Horsham", venue: "The Camping World Community Stadium", time: "3:00pm" },
-  { id: 1, date: "Sat 15 Feb", homeAway: "H", competition: "League", opponent: "Burgess Hill Town", venue: "TerraPura Ground", homeScore: 3, awayScore: 1, result: "W" },
-  { id: 2, date: "Sat 22 Feb", homeAway: "H", competition: "League", opponent: "Cheshunt", venue: "TerraPura Ground", result: "P" },
+  { id: 3, date: "Sat 1 Mar 2025", homeAway: "H", competition: "League", opponent: "Bowers & Pitsea", venue: "TerraPura Ground", time: "3:00pm", isNext: true },
+  { id: 4, date: "Sat 8 Mar 2025", homeAway: "A", competition: "League", opponent: "Horsham", venue: "The Camping World Community Stadium", time: "3:00pm" },
+  { id: 1, date: "Sat 15 Feb 2025", homeAway: "H", competition: "League", opponent: "Burgess Hill Town", venue: "TerraPura Ground", homeScore: 3, awayScore: 1, result: "W" },
+  { id: 2, date: "Sat 22 Feb 2025", homeAway: "H", competition: "League", opponent: "Cheshunt", venue: "TerraPura Ground", result: "P" },
 ];
 
-const upcoming = fixtures.filter((f) => !f.result);
-const past = fixtures.filter((f) => !!f.result);
-
-const resultColor = (r?: string) => {
-  if (r === "W") return "bg-green-600";
-  if (r === "L") return "bg-red-600";
-  if (r === "D") return "bg-amber-500";
-  if (r === "P") return "bg-muted-foreground/40";
-  return "";
+const resultBg = (r?: string) => {
+  if (r === "W") return "bg-green-600 text-primary-foreground";
+  if (r === "L") return "bg-red-600 text-primary-foreground";
+  if (r === "D") return "bg-amber-500 text-primary-foreground";
+  if (r === "P") return "bg-muted-foreground/30 text-foreground";
+  return "bg-muted text-foreground";
 };
 
-const FixtureRow = ({ fixture }: { fixture: Fixture }) => {
+const FixtureCard = ({ fixture }: { fixture: Fixture }) => {
   const isResult = !!fixture.result;
   const homeTeam = fixture.homeAway === "H" ? "Whitehawk" : fixture.opponent;
   const awayTeam = fixture.homeAway === "A" ? "Whitehawk" : fixture.opponent;
-  const homeBadge = fixture.homeAway === "H" ? clubBadge : null;
-  const awayBadge = fixture.homeAway === "A" ? clubBadge : null;
+  const isWhkHome = fixture.homeAway === "H";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className={`group relative overflow-hidden rounded-lg border transition-all hover:shadow-lg ${
-        fixture.isNext
-          ? "border-primary/40 bg-primary/5 shadow-md"
-          : "border-border bg-card hover:border-primary/20"
-      }`}
-    >
-      {/* Next match banner */}
-      {fixture.isNext && (
-        <div className="bg-primary text-primary-foreground text-[10px] font-heading uppercase tracking-[0.2em] text-center py-1.5 font-bold">
-          Next Match
-        </div>
-      )}
-
-      {/* Competition & date bar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border/40 bg-muted/30">
-        <span className="text-[10px] font-heading uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
-          <Calendar size={10} className="opacity-60" />
-          {fixture.date}
+    <div className={`relative bg-card border border-border rounded-lg flex flex-col min-w-[260px] md:min-w-[280px] snap-start ${fixture.isNext ? "border-primary/30" : ""}`}>
+      {/* Top bar: H/A badge + competition/date + result/next badge */}
+      <div className="flex items-start justify-between px-4 pt-4">
+        <span className="text-[11px] font-heading uppercase tracking-widest text-muted-foreground border border-border rounded px-2 py-0.5">
+          {fixture.homeAway === "H" ? "H" : "A"}
         </span>
-        <span className="text-[10px] font-heading uppercase tracking-widest text-muted-foreground">
-          {fixture.competition}
-        </span>
-      </div>
-
-      {/* Main matchup row */}
-      <div className="flex items-center px-4 py-4 md:py-5">
-        {/* Home team */}
-        <div className="flex-1 flex items-center justify-end gap-3 min-w-0">
-          <span className={`font-heading text-sm md:text-base uppercase tracking-wide text-right truncate ${
-            fixture.homeAway === "H" ? "font-bold text-primary" : "text-foreground"
-          }`}>
-            {homeTeam}
+        <div className="flex-1 text-center px-2">
+          <span className="text-primary text-[10px] font-heading uppercase tracking-widest font-bold block">
+            {fixture.competition}
           </span>
-          {homeBadge ? (
-            <img src={homeBadge} alt={homeTeam} className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0" />
-          ) : (
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border">
-              <span className="font-heading text-[10px] text-muted-foreground font-bold">
-                {homeTeam.substring(0, 3).toUpperCase()}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Score / VS / Time */}
-        <div className="shrink-0 mx-3 md:mx-6 min-w-[70px] md:min-w-[90px] text-center">
-          {isResult ? (
-            fixture.homeScore !== undefined && fixture.awayScore !== undefined ? (
-              <div className="flex items-center justify-center gap-2">
-                <span className="font-heading text-2xl md:text-3xl font-black text-foreground">{fixture.homeScore}</span>
-                <span className="text-muted-foreground text-sm">-</span>
-                <span className="font-heading text-2xl md:text-3xl font-black text-foreground">{fixture.awayScore}</span>
-              </div>
-            ) : (
-              <span className="font-heading text-lg font-bold text-muted-foreground">P - P</span>
-            )
-          ) : (
-            <div className="flex flex-col items-center">
-              <span className="font-heading text-xl md:text-2xl font-black text-primary">VS</span>
-              <span className="text-[10px] font-heading text-muted-foreground mt-0.5">{fixture.time}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Away team */}
-        <div className="flex-1 flex items-center gap-3 min-w-0">
-          {awayBadge ? (
-            <img src={awayBadge} alt={awayTeam} className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0" />
-          ) : (
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border">
-              <span className="font-heading text-[10px] text-muted-foreground font-bold">
-                {awayTeam.substring(0, 3).toUpperCase()}
-              </span>
-            </div>
-          )}
-          <span className={`font-heading text-sm md:text-base uppercase tracking-wide truncate ${
-            fixture.homeAway === "A" ? "font-bold text-primary" : "text-foreground"
-          }`}>
-            {awayTeam}
+          <span className="text-[11px] font-heading uppercase tracking-wider text-foreground font-semibold block mt-0.5">
+            {fixture.date}
           </span>
         </div>
-      </div>
-
-      {/* Footer with venue & result badge */}
-      <div className="flex items-center justify-between px-4 py-2 border-t border-border/40 bg-muted/20">
-        <span className="text-[10px] font-body text-muted-foreground flex items-center gap-1.5 truncate">
-          <MapPin size={10} className="opacity-60 shrink-0" />
-          {fixture.venue}
-        </span>
-        {fixture.result && (
-          <span className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-heading font-black text-primary-foreground ${resultColor(fixture.result)}`}>
+        {fixture.isNext ? (
+          <span className="bg-green-600 text-primary-foreground text-[10px] font-heading uppercase tracking-wider px-2.5 py-0.5 rounded font-bold">
+            Next Match
+          </span>
+        ) : fixture.result ? (
+          <span className={`w-7 h-7 flex items-center justify-center rounded text-[11px] font-heading font-black ${resultBg(fixture.result)}`}>
             {fixture.result}
+          </span>
+        ) : <div className="w-7" />}
+      </div>
+
+      {/* Badges + V */}
+      <div className="flex items-center justify-center gap-4 px-4 py-5">
+        {/* Home badge */}
+        {isWhkHome ? (
+          <img src={clubBadge} alt="Whitehawk" className="w-16 h-16 md:w-20 md:h-20 object-contain" />
+        ) : (
+          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-muted flex items-center justify-center border border-border">
+            <span className="font-heading text-xs text-muted-foreground font-bold">{homeTeam.substring(0, 3).toUpperCase()}</span>
+          </div>
+        )}
+        <span className="font-heading text-lg text-muted-foreground font-bold">V</span>
+        {/* Away badge */}
+        {!isWhkHome ? (
+          <img src={clubBadge} alt="Whitehawk" className="w-16 h-16 md:w-20 md:h-20 object-contain" />
+        ) : (
+          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-muted flex items-center justify-center border border-border">
+            <span className="font-heading text-xs text-muted-foreground font-bold">{awayTeam.substring(0, 3).toUpperCase()}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Team names */}
+      <div className="text-center px-4 space-y-0.5">
+        <p className={`font-heading text-sm uppercase tracking-wide ${isWhkHome ? "font-bold text-foreground" : "text-foreground"}`}>
+          {homeTeam}
+        </p>
+        <p className="text-primary text-[10px] font-heading uppercase tracking-widest font-bold">VS</p>
+        <p className={`font-heading text-sm uppercase tracking-wide ${!isWhkHome ? "font-bold text-foreground" : "text-foreground"}`}>
+          {awayTeam}
+        </p>
+      </div>
+
+      {/* Venue */}
+      <p className="text-[10px] text-muted-foreground text-center font-body mt-2 px-4 truncate">
+        {fixture.venue}
+      </p>
+
+      {/* Score / Time at bottom */}
+      <div className="mt-auto pt-4 pb-5 flex flex-col items-center gap-2">
+        {isResult ? (
+          fixture.homeScore !== undefined && fixture.awayScore !== undefined ? (
+            <div className="flex items-center gap-1.5">
+              <span className={`w-10 h-10 flex items-center justify-center rounded font-heading text-lg font-black ${resultBg(fixture.result)}`}>
+                {fixture.homeScore}
+              </span>
+              <span className={`w-10 h-10 flex items-center justify-center rounded font-heading text-lg font-black ${resultBg(fixture.result)}`}>
+                {fixture.awayScore}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <span className={`w-10 h-10 flex items-center justify-center rounded font-heading text-lg font-black ${resultBg(fixture.result)}`}>P</span>
+              <span className={`w-10 h-10 flex items-center justify-center rounded font-heading text-lg font-black ${resultBg(fixture.result)}`}>P</span>
+            </div>
+          )
+        ) : (
+          <span className="bg-muted text-foreground font-heading text-lg font-bold px-5 py-2 rounded">
+            {fixture.time}
           </span>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -156,8 +137,6 @@ const leagueTable = [
 ];
 
 const FixturesWidget = () => {
-  const [tab, setTab] = useState<"fixtures" | "results">("fixtures");
-
   return (
     <section className="py-12 md:py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -166,13 +145,13 @@ const FixturesWidget = () => {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex items-end justify-between mb-6"
+          className="flex items-end justify-between mb-8"
         >
           <div>
             <h3 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wide text-foreground">
-              Fixtures & Results
+              Fixtures / Results
             </h3>
-            <div className="h-1 w-12 bg-primary rounded-full mt-2" />
+            <div className="h-1 w-16 bg-club-gold rounded-full mt-2" />
           </div>
           <a
             href="/matches"
@@ -182,36 +161,19 @@ const FixturesWidget = () => {
           </a>
         </motion.div>
 
-        {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-muted/50 rounded-lg p-1 w-fit border border-border">
-          <button
-            onClick={() => setTab("fixtures")}
-            className={`px-5 py-2 rounded-md font-heading text-xs uppercase tracking-wider transition-all ${
-              tab === "fixtures"
-                ? "bg-primary text-primary-foreground shadow-sm font-bold"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Fixtures
-          </button>
-          <button
-            onClick={() => setTab("results")}
-            className={`px-5 py-2 rounded-md font-heading text-xs uppercase tracking-wider transition-all ${
-              tab === "results"
-                ? "bg-primary text-primary-foreground shadow-sm font-bold"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Results
-          </button>
-        </div>
-
-        {/* Fixture/Result cards */}
-        <div className="flex flex-col gap-3 mb-12">
-          {tab === "fixtures"
-            ? upcoming.map((f) => <FixtureRow key={f.id} fixture={f} />)
-            : past.map((f) => <FixtureRow key={f.id} fixture={f} />)
-          }
+        {/* Horizontally scrolling cards */}
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+          {fixtures.map((f) => (
+            <motion.div
+              key={f.id}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex-shrink-0 w-[280px] md:w-[300px]"
+            >
+              <FixtureCard fixture={f} />
+            </motion.div>
+          ))}
         </div>
 
         {/* League Table */}
@@ -219,13 +181,13 @@ const FixturesWidget = () => {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex items-end justify-between mb-6"
+          className="flex items-end justify-between mb-6 mt-12"
         >
           <div>
             <h3 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wide text-foreground">
               League Table
             </h3>
-            <div className="h-1 w-12 bg-primary rounded-full mt-2" />
+            <div className="h-1 w-12 bg-club-gold rounded-full mt-2" />
           </div>
           <a
             href="/matches"
