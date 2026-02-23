@@ -14,8 +14,8 @@ const Index = () => {
       <FixturesTicker />
       <main className="pt-[84px] lg:pt-[124px]">
         <HeroSection />
-        <FixturesWidget />
         <LatestNews />
+        <FixturesWidget />
         <DiscoverSection />
         <SponsorsBar />
       </main>
