@@ -1,4 +1,3 @@
-import clubBadge from "@/assets/club-badge.png";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 const ClubFooter = () => {
@@ -7,10 +6,15 @@ const ClubFooter = () => {
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid md:grid-cols-4 gap-10">
           <div className="flex items-start gap-4">
-            <img src={clubBadge} alt="Club Badge" className="h-16 w-16 object-contain" />
+            <img
+              src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png"
+              alt="Whitehawk FC"
+              className="h-16 w-16 object-contain shrink-0"
+            />
             <div>
-              <h4 className="font-heading text-lg uppercase text-primary-foreground tracking-wider font-bold">
-                Whitehawk FC
+              <h4 className="font-heading text-xl text-primary-foreground tracking-tight font-bold leading-tight">
+                Whitehawk<br />
+                <span className="text-primary">Football Club</span>
               </h4>
               <p className="text-primary-foreground/40 text-xs font-body mt-2 leading-relaxed">
                 TerraPura Ground, East Brighton Park<br />
