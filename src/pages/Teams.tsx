@@ -212,6 +212,8 @@ const Teams = () => {
             </div>
           </div>
         </section>
+        {/* Club Personnel */}
+        <ClubPersonnel />
       </main>
       <ClubFooter />
     </div>
