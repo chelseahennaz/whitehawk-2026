@@ -1,6 +1,7 @@
 import ClubNavigation from "@/components/ClubNavigation";
 import FixturesTicker from "@/components/FixturesTicker";
 import ClubFooter from "@/components/ClubFooter";
+import ClubPersonnel from "@/components/ClubPersonnel";
 import { Trophy, Users, Heart } from "lucide-react";
 
 interface Player {
@@ -211,6 +212,8 @@ const Teams = () => {
             </div>
           </div>
         </section>
+        {/* Club Personnel */}
+        <ClubPersonnel />
       </main>
       <ClubFooter />
     </div>
