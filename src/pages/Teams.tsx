@@ -3,6 +3,7 @@ import FixturesTicker from "@/components/FixturesTicker";
 import ClubFooter from "@/components/ClubFooter";
 import ClubPersonnel from "@/components/ClubPersonnel";
 import OtherTeamsSection from "@/components/OtherTeamsSection";
+import TeamMatchCentres from "@/components/TeamMatchCentres";
 
 interface Player {
   name: string;
@@ -65,42 +66,40 @@ const Teams = () => {
       <main className="pt-[90px] md:pt-[124px]">
         <section className="bg-club-dark py-16 md:py-24">
           <div className="container mx-auto px-4">
-            <p className="font-heading text-sm uppercase tracking-widest text-club-gold mb-2">Our Squads</p>
-            <h1 className="font-heading text-4xl md:text-6xl font-bold uppercase text-primary-foreground leading-none">
+            <p className="mb-2 font-heading text-sm uppercase tracking-widest text-club-gold">Our Squads</p>
+            <h1 className="font-heading text-4xl font-bold uppercase leading-none text-primary-foreground md:text-6xl">
               Teams
             </h1>
-            <p className="mt-4 text-primary-foreground/70 font-body text-base max-w-2xl">
+            <p className="mt-4 max-w-2xl font-body text-base text-primary-foreground/70">
               From the men’s first team to women’s football, U18s and a growing youth pathway, Whitehawk is building a wider football programme that brings more players, families and energy into the club.
             </p>
           </div>
         </section>
 
-        <section id="mens-first-team" className="py-12 md:py-20 scroll-mt-36">
+        <section id="mens-first-team" className="scroll-mt-36 py-12 md:py-20">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
+            <div className="mb-8 flex items-center justify-between">
               <div>
-                <p className="font-heading text-sm uppercase tracking-widest text-club-gold mb-1">2025-26 Season</p>
-                <h2 className="font-heading text-3xl md:text-4xl font-bold uppercase text-foreground">
+                <p className="mb-1 font-heading text-sm uppercase tracking-widest text-club-gold">2025-26 Season</p>
+                <h2 className="font-heading text-3xl font-bold uppercase text-foreground md:text-4xl">
                   Men&apos;s First Team Squad
                 </h2>
-                <p className="mt-1 text-muted-foreground font-body text-sm">
-                  Isthmian League South East Division
-                </p>
+                <p className="mt-1 font-body text-sm text-muted-foreground">Isthmian League South East Division</p>
               </div>
             </div>
 
             {grouped.map((group) => (
               <div key={group.position} className="mb-8">
-                <h3 className="font-heading text-lg uppercase tracking-wide text-foreground mb-3 border-b border-border pb-2">
+                <h3 className="mb-3 border-b border-border pb-2 font-heading text-lg uppercase tracking-wide text-foreground">
                   {group.label}
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {group.players.map((player) => (
                     <div
                       key={player.name}
-                      className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow flex items-center gap-4"
+                      className="flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md"
                     >
-                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted">
                         <span className="font-heading text-sm font-bold text-muted-foreground">
                           {player.name
                             .split(" ")
@@ -108,13 +107,13 @@ const Teams = () => {
                             .join("")}
                         </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-heading text-sm font-bold text-foreground truncate">{player.name}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className={`text-[9px] font-heading uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${positionTone[player.position]}`}>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-heading text-sm font-bold text-foreground">{player.name}</p>
+                        <div className="mt-1 flex items-center gap-2">
+                          <span className={`rounded-sm px-1.5 py-0.5 font-heading text-[9px] uppercase tracking-widest ${positionTone[player.position]}`}>
                             {player.position}
                           </span>
-                          <span className="text-[10px] font-body text-muted-foreground">
+                          <span className="font-body text-[10px] text-muted-foreground">
                             {player.appearances} apps · {player.goals} goals
                           </span>
                         </div>
@@ -128,6 +127,7 @@ const Teams = () => {
         </section>
 
         <OtherTeamsSection />
+        <TeamMatchCentres />
         <ClubPersonnel />
       </main>
       <ClubFooter />
