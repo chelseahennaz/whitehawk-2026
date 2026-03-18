@@ -8,6 +8,7 @@ import Teams from "./pages/Teams";
 import Matches from "./pages/Matches";
 import Sponsor from "./pages/Sponsor";
 import News from "./pages/News";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
