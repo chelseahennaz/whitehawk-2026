@@ -280,23 +280,6 @@ const MobileNav = () => {
         )}
       </AnimatePresence>
 
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-club-dark border-t border-primary/20 safe-area-bottom">
-          {/* navItems combined for bottom nav mapping only */}
-          {[...leftNavItems, ...rightNavItems].slice(0, 5).map((item) => {
-            const isActive = isItemActive(location.pathname, item.path);
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors ${
-                  isActive ? "text-primary" : "text-muted-foreground"
-                }`}
-              >
-                <span className="text-[10px] font-heading uppercase tracking-wider">{item.label}</span>
-              </Link>
-            );
-          })}
-      </nav>
     </>
   );
 };

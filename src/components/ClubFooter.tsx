@@ -2,7 +2,7 @@ import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
 const ClubFooter = () => {
   return (
-    <footer className="bg-club-dark border-t border-primary-foreground/10 pb-20 lg:pb-0">
+    <footer className="bg-club-dark border-t border-primary-foreground/10">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid md:grid-cols-4 gap-10">
           <div className="flex items-start gap-4">
