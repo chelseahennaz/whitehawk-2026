@@ -72,7 +72,7 @@ const ClubFooter = () => {
 
         <div className="border-t border-primary-foreground/5 mt-10 pt-8 text-center">
           <p className="text-primary-foreground/25 text-xs font-body">
-            © 2026 Whitehawk FC. All rights reserved.
+            © 2026 Whitehawk FC. All rights reserved. | Made by Henry Summers
           </p>
         </div>
       </div>

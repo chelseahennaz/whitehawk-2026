@@ -11,6 +11,13 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      "/fwp-api": {
+        target: "https://api.footballwebpages.co.uk",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/fwp-api/, "")
+      }
+    }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
@@ -18,4 +25,5 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  base: mode === "production" ? "/whitehawk-2026/" : "/",
 }));

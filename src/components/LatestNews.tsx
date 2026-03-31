@@ -1,93 +1,118 @@
 import { motion } from "framer-motion";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, ArrowRight } from "lucide-react";
 import { useRef } from "react";
-
-interface NewsItem {
-  id: number;
-  title: string;
-  excerpt: string;
-  date: string;
-  category: string;
-}
-
-const newsItems: NewsItem[] = [
-  { id: 1, title: "Whitehawk 3 Burgess Hill Town 1", excerpt: "The Hawks secured a convincing home victory at the TerraPura Ground with three goals to one.", date: "15 Feb 2026", category: "Match Report" },
-  { id: 2, title: "Burgess Hill Flashback", excerpt: "A look back at some memorable encounters between the Hawks and Burgess Hill Town over the years.", date: "12 Feb 2026", category: "News" },
-  { id: 3, title: "Hawks v Cheshunt Game Off Again", excerpt: "The Isthmian League fixture against Cheshunt has been postponed for a second time due to a waterlogged pitch.", date: "9 Jan 2026", category: "Men's Team" },
-  { id: 4, title: "New Signing Announcement", excerpt: "Whitehawk FC is delighted to announce the signing of a promising young midfielder ahead of the second half of the season.", date: "5 Jan 2026", category: "Club" },
-  { id: 5, title: "Community Day Success", excerpt: "Over 200 supporters attended our Community Day at the TerraPura Ground with activities for the whole family.", date: "20 Dec 2025", category: "Club" },
-  { id: 6, title: "Manager's Press Conference", excerpt: "The gaffer gives his thoughts ahead of a busy festive period for the Hawks.", date: "15 Dec 2025", category: "First Team" },
-];
+import { usePosts } from "@/hooks/useSupabase";
+import { Link } from "react-router-dom";
 
 const LatestNews = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { data: newsItems, isLoading } = usePosts();
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({ left: dir === "left" ? -320 : 320, behavior: "smooth" });
+    const scrollAmount = 340;
+    scrollRef.current.scrollBy({ left: dir === "left" ? -scrollAmount : scrollAmount, behavior: "smooth" });
   };
 
-  return (
-    <section className="py-12 md:py-20 bg-muted/50">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex items-end justify-between mb-8"
-        >
-          <div>
-            <h3 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-wide text-foreground">
-              Latest News
-            </h3>
-            <div className="h-1 w-12 bg-primary rounded-full mt-2" />
-          </div>
-          <div className="flex items-center gap-2">
-            <a href="/news" className="text-xs font-heading uppercase tracking-wider text-primary hover:text-primary/80 flex items-center gap-1 mr-2 transition-colors">
-              All News <ChevronRight size={12} />
-            </a>
-            <button onClick={() => scroll("left")} className="w-8 h-8 flex items-center justify-center border border-border rounded-full text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors">
-              <ChevronLeft size={16} />
-            </button>
-            <button onClick={() => scroll("right")} className="w-8 h-8 flex items-center justify-center border border-border rounded-full text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors">
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </motion.div>
+  if (isLoading) {
+    return (
+      <div className="py-20 flex justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
-        <div ref={scrollRef} className="flex gap-5 overflow-x-auto pb-4 -mx-4 px-4" style={{ scrollbarWidth: "none" }}>
-          {newsItems.map((item, i) => (
-            <motion.article
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="group cursor-pointer min-w-[280px] max-w-[300px] flex-shrink-0 rounded-lg overflow-hidden bg-card border border-border hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+  // Show major items, limited for the ticker
+  const itemsToShow = newsItems?.slice(0, 8) || [];
+
+  return (
+    <section className="py-16 md:py-24 bg-white overflow-hidden border-t border-[#eee]">
+      <div className="container mx-auto px-4">
+        {/* Header matching Videos Style structure but with Light theme colors */}
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <h2 className="font-heading text-4xl md:text-6xl text-[#141b2b] uppercase tracking-wider leading-none">
+              Latest News
+            </h2>
+            <div className="h-1 w-12 bg-club-gold mt-4" />
+          </div>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => scroll("left")} 
+              className="w-12 h-12 flex items-center justify-center bg-neutral-100 border border-neutral-200 text-[#141b2b] hover:bg-neutral-200 transition-all rounded-full md:flex hidden"
             >
-              <div className="relative h-40 overflow-hidden">
-                <div className="absolute inset-0 club-gradient" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-                  <span className="bg-club-gold text-club-dark text-[9px] font-heading uppercase tracking-widest px-2.5 py-1 rounded font-bold">
-                    {item.category}
-                  </span>
-                </div>
-              </div>
-              <div className="p-5">
-                <h4 className="font-heading text-sm uppercase tracking-wide text-foreground group-hover:text-primary transition-colors leading-tight line-clamp-2 font-semibold">
-                  {item.title}
-                </h4>
-                <p className="text-muted-foreground text-xs mt-2.5 font-body line-clamp-2 leading-relaxed">
-                  {item.excerpt}
-                </p>
-                <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-border/50 text-muted-foreground">
-                  <Calendar size={10} />
-                  <span className="text-[10px] font-body">{item.date}</span>
-                </div>
-              </div>
-            </motion.article>
-          ))}
+              <ChevronLeft size={24} />
+            </button>
+            <button 
+              onClick={() => scroll("right")} 
+              className="w-12 h-12 flex items-center justify-center bg-neutral-100 border border-neutral-200 text-[#141b2b] hover:bg-neutral-200 transition-all rounded-full md:flex hidden"
+            >
+              <ChevronRight size={24} />
+            </button>
+            <Link to="/news" className="ml-4 font-heading text-sm uppercase tracking-wider text-[#8e160b] hover:opacity-80 border-b border-[#8e160b] pb-0.5 transition-all">
+              All News
+            </Link>
+          </div>
+        </div>
+
+        {/* Carousel Wrapper */}
+        <div className="relative group/carousel">
+          {/* Carousel Container */}
+          <div 
+            ref={scrollRef} 
+            className="flex gap-8 overflow-x-auto pb-8 hide-scrollbar snap-x snap-mandatory"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {itemsToShow.map((item, i) => {
+              const dateObj = new Date(item.published_at || Date.now());
+              const day = dateObj.getDate();
+              const month = dateObj.toLocaleString('en-GB', { month: 'short' }).toUpperCase();
+              const year = dateObj.getFullYear();
+              
+              return (
+                <Link 
+                  key={item.id} 
+                  to={`/news/${item.slug}`}
+                  className="flex-shrink-0 snap-start w-full md:w-[calc(33.333%-1.35rem)] group/card"
+                >
+                  <article className="flex flex-col h-full bg-transparent">
+                    {/* Image Container matching Videos */}
+                    <div className="relative aspect-video overflow-hidden rounded-xl mb-5 shadow-2l border border-white/5 shadow-2xl">
+                      {item.image_url ? (
+                        <img 
+                          src={item.image_url} 
+                          alt={item.title} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110 brightness-90 group-hover/card:brightness-100" 
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                           <Loader2 className="w-6 h-6 animate-spin text-white/20" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/20 group-hover/card:bg-black/0 transition-colors duration-500" />
+                    </div>
+
+                    {/* Info matching Video style */}
+                    <div className="px-1">
+                      <div className="flex items-center gap-2 font-heading text-xs md:text-sm tracking-widest mb-2">
+                        <span className="text-[#8e160b] font-bold">CLUB NEWS</span>
+                        <span className="text-neutral-200">•</span>
+                        <span className="text-neutral-500 font-medium">{day} {month} {year}</span>
+                      </div>
+                      <h3 className="text-[#141b2b] font-heading text-xl md:text-2xl line-clamp-2 leading-[1.1] group-hover/card:text-[#8e160b] transition-colors duration-300 drop-shadow-sm uppercase">
+                        {item.title}
+                      </h3>
+                      {item.excerpt && (
+                        <p className="text-neutral-600 text-sm leading-relaxed line-clamp-2 mt-2 font-body">
+                          {item.excerpt}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -95,3 +120,4 @@ const LatestNews = () => {
 };
 
 export default LatestNews;
+

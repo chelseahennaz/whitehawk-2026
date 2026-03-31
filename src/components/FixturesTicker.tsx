@@ -1,10 +1,35 @@
 import { motion } from "framer-motion";
+import { useParsedFixtures } from "@/hooks/useFWP";
+import { useSettings } from "@/hooks/useSupabase";
+import { format, parseISO } from "date-fns";
 
 const FixturesTicker = () => {
-  const tickerText = "NEXT HOME GAME: SAT 1 MAR VS. BOWERS & PITSEA – 3:00PM KO";
+  const { nextMatch, isLoading } = useParsedFixtures();
+  const { data: settings } = useSettings("fixtures_ticker");
+  
   const shoutText = "UP THE HAWKS!";
 
+  if (settings?.value?.enabled === false) {
+    return null;
+  }
+
   const items = Array(6).fill(null);
+
+  // Fallback text while loading or if no next match
+  let tickerText = "LOADING NEXT MATCH...";
+  
+  if (!isLoading) {
+    if (nextMatch) {
+      const isHome = nextMatch["home-team"].name === "Whitehawk" || nextMatch["home-team"].id === 468;
+      const opponent = isHome ? nextMatch["away-team"].name : nextMatch["home-team"].name;
+      const hOrA = isHome ? "HOME" : "AWAY";
+      const dateStr = format(parseISO(nextMatch.date), "EEE d MMM").toUpperCase();
+      const compLabel = nextMatch.competition.name.includes("Isthmian League") ? "LEAGUE" : "CUP";
+      tickerText = `NEXT ${hOrA} GAME: ${dateStr} VS. ${opponent.toUpperCase()} (${compLabel}) – ${nextMatch.time} KO`;
+    } else {
+      tickerText = "NO UPCOMING MATCHES SCHEDULED";
+    }
+  }
 
   return (
     <div className="fixed top-[56px] lg:top-[96px] left-0 right-0 z-[45] bg-club-gold overflow-hidden h-7 flex items-center">

@@ -1,130 +1,166 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Facebook, Instagram, Twitter, Youtube, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { teamNavItems } from "@/data/clubTeams";
+import clubLogoWhite from "@/assets/club-logo-white.png";
+import { useSettings } from "@/hooks/useSupabase";
 
-const navItems = [
-  { label: "Home", path: "/" },
+interface NavItem {
+  label: string;
+  path: string;
+  children?: { label: string; path: string; }[];
+}
+
+const leftNavItems: NavItem[] = [
   { label: "Teams", path: "/teams", children: teamNavItems },
   { label: "Matches", path: "/matches" },
-  { label: "News", path: "/news" },
-  { label: "Club", path: "/club" },
   { label: "Tickets", path: "/tickets" },
+  { label: "News", path: "/news" },
+];
+
+const rightNavItems: NavItem[] = [
+  { 
+    label: "Club", 
+    path: "/club", 
+    children: [
+      { label: "Hire Our Pitch", path: "/hire-pitch" },
+      { label: "Hire Our Clubhouse", path: "/hire-clubhouse" },
+    ] 
+  },
+  { label: "Sponsor", path: "/sponsor" },
   { label: "Contact", path: "/contact" },
-];
-
-const utilityLinks = [
-  { label: "Hire Our Pitch", path: "/hire-pitch" },
-  { label: "Hire Our Clubhouse", path: "/hire-clubhouse" },
-  { label: "Sponsor Pack", path: "/sponsor" },
-];
-
-const socialIcons = [
-  { Icon: Facebook, href: "https://facebook.com/whitehawkfc", label: "Facebook" },
-  { Icon: Instagram, href: "https://instagram.com/whitehawkfc", label: "Instagram" },
-  { Icon: Twitter, href: "https://twitter.com/whitehawkfc", label: "X" },
-  { Icon: Youtube, href: "https://youtube.com/@whitehawkfc", label: "YouTube" },
+  { label: "Admin", path: "/admin/login" },
 ];
 
 const isItemActive = (pathname: string, path: string) => pathname === path || pathname.startsWith(`${path}/`);
 
 const DesktopNav = () => {
   const location = useLocation();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [hoveredMenu, setHoveredMenu] = useState<NavItem | null>(null);
+  const { data: brandSettings } = useSettings("club_brand");
+  const logoUrl = brandSettings?.value?.logo_url || clubLogoWhite;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const headerActive = isScrolled || hoveredMenu !== null;
 
   return (
-    <header className="hidden lg:block fixed top-0 left-0 right-0 z-50">
-      <div className="bg-club-dark">
-        <div className="container mx-auto flex items-center justify-end gap-4 py-1.5 px-4">
-          {utilityLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className="text-[11px] font-heading uppercase tracking-widest text-primary-foreground/60 hover:text-primary-foreground transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-club-red-dark relative">
-        <div className="container mx-auto flex items-center justify-between py-0 px-4">
-          <Link to="/" className="absolute left-4 -top-6 z-[60] flex items-center">
-            <img
-              alt="Whitehawk FC"
-              className="h-24 w-24 object-contain drop-shadow-lg"
-              src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png"
-            />
-          </Link>
-
-          <div className="w-28" />
-
-          <nav className="flex items-center gap-0">
-            {navItems.map((item) => {
+    <header 
+      className="hidden lg:block fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      onMouseLeave={() => setHoveredMenu(null)}
+    >
+      <div className={`transition-all duration-300 relative w-full ${headerActive ? "bg-[#8e160b] shadow-xl" : "bg-transparent"}`}>
+        <div className={`container mx-auto flex items-center justify-between py-0 px-8 transition-all duration-300 ${isScrolled ? "h-16" : "h-20 md:h-28"}`}>
+          {/* Left Nav */}
+          <nav className="flex-1 flex justify-end items-center gap-0">
+            {leftNavItems.map((item) => {
               const isActive = isItemActive(location.pathname, item.path);
-
-              if (item.children) {
-                return (
-                  <div key={item.path} className="group relative">
-                    <Link
-                      to={item.path}
-                      className={`flex items-center gap-1 px-5 py-5 font-heading text-base uppercase tracking-wider transition-colors border-b-3 ${
-                        isActive
-                          ? "border-club-gold text-primary-foreground"
-                          : "border-transparent text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/5"
-                      }`}
-                    >
-                      {item.label}
-                      <ChevronDown size={16} className="transition-transform group-hover:rotate-180" />
-                    </Link>
-                    <div className="invisible absolute left-0 top-full z-50 w-72 translate-y-2 rounded-xl border border-border bg-card p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.path}
-                          to={child.path}
-                          className="block rounded-lg px-4 py-3 font-heading text-sm uppercase tracking-wider text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-
               return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`px-5 py-5 font-heading text-base uppercase tracking-wider transition-colors border-b-3 ${
-                    isActive
-                      ? "border-club-gold text-primary-foreground"
-                      : "border-transparent text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/5"
-                  }`}
+                <div 
+                  key={item.path} 
+                  className="group relative"
+                  onMouseEnter={() => item.children ? setHoveredMenu(item) : setHoveredMenu(null)}
                 >
-                  {item.label}
-                </Link>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center gap-1.5 px-6 font-heading uppercase transition-all duration-300 border-b-3 ${
+                      isScrolled ? "py-2 text-sm" : "py-5 text-base"
+                    } ${
+                      isActive || hoveredMenu?.path === item.path
+                        ? "border-club-gold text-primary-foreground"
+                        : "border-transparent text-primary-foreground/80 hover:text-primary-foreground"
+                    }`}
+                  >
+                    {item.label}
+                    {item.children && <ChevronDown size={14} className={`transition-transform opacity-60 ${hoveredMenu?.path === item.path ? "rotate-180" : ""}`} />}
+                  </Link>
+                </div>
               );
             })}
           </nav>
 
-          <div className="flex items-center gap-0">
-            <div className="w-px h-6 bg-primary-foreground/20 mx-3" />
-            {socialIcons.map(({ Icon, href, label }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
-                aria-label={label}
-              >
-                <Icon size={18} />
-              </a>
-            ))}
+          {/* Centered Logo */}
+          <div className="flex-shrink-0 px-12 relative z-[60] flex items-center justify-center">
+            <Link to="/" className="flex items-center justify-center" onMouseEnter={() => setHoveredMenu(null)}>
+              <img
+                alt="Whitehawk FC"
+                className={`transition-all duration-300 object-contain ${isScrolled ? "h-11 w-11" : "h-16 w-16 md:h-20 md:w-20"}`}
+                src={logoUrl}
+              />
+            </Link>
           </div>
+
+          {/* Right Nav */}
+          <nav className="flex-1 flex justify-start items-center gap-0">
+            {rightNavItems.map((item) => {
+              const isActive = isItemActive(location.pathname, item.path);
+              return (
+                <div 
+                  key={item.path} 
+                  className="group relative"
+                  onMouseEnter={() => item.children ? setHoveredMenu(item) : setHoveredMenu(null)}
+                >
+                  <Link
+                    to={item.path}
+                    className={`flex items-center gap-1.5 px-6 font-heading uppercase transition-all duration-300 border-b-3 ${
+                      isScrolled ? "py-2 text-sm" : "py-5 text-base"
+                    } ${
+                      isActive || hoveredMenu?.path === item.path
+                        ? "border-club-gold text-primary-foreground"
+                        : "border-transparent text-primary-foreground/80 hover:text-primary-foreground"
+                    }`}
+                  >
+                    {item.label}
+                    {item.children && <ChevronDown size={14} className={`transition-transform opacity-60 ${hoveredMenu?.path === item.path ? "rotate-180" : ""}`} />}
+                  </Link>
+                </div>
+              );
+            })}
+          </nav>
         </div>
+
+        {/* Mega Menu Content */}
+        <AnimatePresence>
+          {hoveredMenu && hoveredMenu.children && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden bg-[#8e160b] border-t border-white/10 shadow-2xl"
+            >
+              <div className="container mx-auto px-8 py-16 flex border-b border-white/5">
+                {/* Large label on left */}
+                <div className="w-1/3 pr-12">
+                  <h2 className="font-heading text-8xl text-white uppercase leading-none tracking-tighter opacity-90">
+                    {hoveredMenu.label}
+                  </h2>
+                </div>
+                
+                {/* Sub-links in columns */}
+                <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-12">
+                  {hoveredMenu.children.map((child) => (
+                    <Link
+                      key={child.path}
+                      to={child.path}
+                      onClick={() => setHoveredMenu(null)}
+                      className="block font-heading text-xl uppercase text-white hover:text-club-gold transition-colors tracking-wide"
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
@@ -134,23 +170,39 @@ const MobileNav = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [teamsOpen, setTeamsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { data: brandSettings } = useSettings("club_brand");
+  const logoUrl = brandSettings?.value?.logo_url || clubLogoWhite;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-club-red-dark">
-        <div className="flex items-center justify-between px-4 py-2">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png"
-              alt="Whitehawk FC"
-              className="h-11 w-11 object-contain"
-            />
-            <span className="font-heading text-sm font-semibold uppercase text-primary-foreground tracking-widest">
-              Whitehawk FC
-            </span>
-          </Link>
-          <button onClick={() => setMenuOpen(!menuOpen)} className="text-primary-foreground p-1" aria-label="Toggle navigation">
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+      <header className={`lg:hidden fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-[#8e160b] shadow-md" : "bg-transparent"}`}>
+        <div className={`flex items-center justify-between px-4 transition-all duration-300 relative ${isScrolled ? "py-1.5" : "py-3"}`}>
+          {/* Logo - Centered absolute */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center">
+            <Link to="/" className="flex items-center gap-3">
+              <img
+                src={logoUrl}
+                alt="Whitehawk FC"
+                className={`transition-all duration-300 object-contain ${isScrolled ? "h-10 w-10" : "h-14 w-14"}`}
+              />
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-3 invisible"> {/* Placeholder for symmetry */}
+             <div className="h-11 w-11" />
+          </div>
+
+          <button onClick={() => setMenuOpen(!menuOpen)} className="text-primary-foreground p-2 relative z-50" aria-label="Toggle navigation">
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </header>
@@ -161,9 +213,9 @@ const MobileNav = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="lg:hidden fixed top-[64px] left-0 right-0 z-40 bg-club-dark/95 backdrop-blur-sm border-b border-primary/20"
+            className="lg:hidden fixed top-[72px] left-0 right-0 z-40 bg-club-dark/95 backdrop-blur-sm border-b border-primary/20"
           >
-            {navItems.map((item) => {
+            {[...leftNavItems, ...rightNavItems].map((item) => {
               const isActive = isItemActive(location.pathname, item.path);
 
               if (item.children) {
@@ -217,27 +269,20 @@ const MobileNav = () => {
                 </Link>
               );
             })}
-            <div className="flex items-center justify-center gap-4 py-4">
-              {socialIcons.map(({ Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 text-primary-foreground/60 hover:text-primary-foreground transition-colors"
-                  aria-label={label}
-                >
-                  <Icon size={18} />
-                </a>
-              ))}
-            </div>
+            <Link
+              to="/admin/login"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center px-6 py-4 font-heading text-sm uppercase tracking-wider border-b border-primary-foreground/10 text-club-gold bg-primary/5"
+            >
+              Admin Login
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
 
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-club-dark border-t border-primary/20 safe-area-bottom">
-        <div className="flex items-center justify-around py-2 pb-[env(safe-area-inset-bottom)]">
-          {navItems.slice(0, 5).map((item) => {
+          {/* navItems combined for bottom nav mapping only */}
+          {[...leftNavItems, ...rightNavItems].slice(0, 5).map((item) => {
             const isActive = isItemActive(location.pathname, item.path);
             return (
               <Link
@@ -251,7 +296,6 @@ const MobileNav = () => {
               </Link>
             );
           })}
-        </div>
       </nav>
     </>
   );
