@@ -26,32 +26,29 @@ const LatestNews = () => {
   const itemsToShow = newsItems?.slice(0, 8) || [];
 
   return (
-    <section className="py-16 md:py-24 bg-white overflow-hidden border-t border-[#eee]">
+    <section className="py-16 md:py-24 bg-[#141b2b] overflow-hidden">
       <div className="container mx-auto px-4">
-        {/* Header matching Videos Style structure but with Light theme colors */}
+        {/* Header */}
         <div className="flex items-end justify-between mb-12">
           <div>
-            <h2 className="font-heading text-4xl md:text-6xl text-[#141b2b] uppercase tracking-wider leading-none">
+            <h2 className="font-heading text-4xl md:text-6xl text-white uppercase tracking-wider leading-none">
               Latest News
             </h2>
             <div className="h-1 w-12 bg-club-gold mt-4" />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 md:flex hidden">
             <button 
               onClick={() => scroll("left")} 
-              className="w-12 h-12 flex items-center justify-center bg-neutral-100 border border-neutral-200 text-[#141b2b] hover:bg-neutral-200 transition-all rounded-full md:flex hidden"
+              className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all rounded-full"
             >
               <ChevronLeft size={24} />
             </button>
             <button 
               onClick={() => scroll("right")} 
-              className="w-12 h-12 flex items-center justify-center bg-neutral-100 border border-neutral-200 text-[#141b2b] hover:bg-neutral-200 transition-all rounded-full md:flex hidden"
+              className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all rounded-full"
             >
               <ChevronRight size={24} />
             </button>
-            <Link to="/news" className="ml-4 font-heading text-sm uppercase tracking-wider text-[#8e160b] hover:opacity-80 border-b border-[#8e160b] pb-0.5 transition-all">
-              All News
-            </Link>
           </div>
         </div>
 
@@ -77,7 +74,7 @@ const LatestNews = () => {
                 >
                   <article className="flex flex-col h-full bg-transparent">
                     {/* Image Container matching Videos */}
-                    <div className="relative aspect-video overflow-hidden rounded-xl mb-5 shadow-2l border border-white/5 shadow-2xl">
+                    <div className="relative aspect-video overflow-hidden mb-5 border border-white/5 shadow-2xl">
                       {item.image_url ? (
                         <img 
                           src={item.image_url} 
@@ -95,15 +92,15 @@ const LatestNews = () => {
                     {/* Info matching Video style */}
                     <div className="px-1">
                       <div className="flex items-center gap-2 font-heading text-xs md:text-sm tracking-widest mb-2">
-                        <span className="text-[#8e160b] font-bold">CLUB NEWS</span>
-                        <span className="text-neutral-200">•</span>
-                        <span className="text-neutral-500 font-medium">{day} {month} {year}</span>
+                        <span className="text-club-gold font-bold">CLUB NEWS</span>
+                        <span className="text-white/20">•</span>
+                        <span className="text-white/60 font-medium">{day} {month} {year}</span>
                       </div>
-                      <h3 className="text-[#141b2b] font-heading text-xl md:text-2xl line-clamp-2 leading-[1.1] group-hover/card:text-[#8e160b] transition-colors duration-300 drop-shadow-sm uppercase">
+                      <h3 className="text-white font-heading text-xl md:text-2xl line-clamp-2 leading-[1.1] group-hover/card:text-primary transition-colors duration-300 drop-shadow-md uppercase">
                         {item.title}
                       </h3>
                       {item.excerpt && (
-                        <p className="text-neutral-600 text-sm leading-relaxed line-clamp-2 mt-2 font-body">
+                        <p className="text-white/70 text-sm leading-relaxed line-clamp-2 mt-2 font-body">
                           {item.excerpt}
                         </p>
                       )}
@@ -113,6 +110,35 @@ const LatestNews = () => {
               );
             })}
           </div>
+        </div>
+
+        {/* All News CTA - same arrow-button style as Fixtures & Results */}
+        <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "32px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          <Link
+            to="/news"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "14px",
+              color: "#fff",
+              textDecoration: "none",
+              borderTop: "1px solid rgba(255,255,255,0.4)",
+              borderBottom: "1px solid rgba(255,255,255,0.4)",
+              padding: "12px 16px 10px",
+              minWidth: "250px",
+              justifyContent: "center",
+              fontFamily: '"Bebas Neue", sans-serif',
+              fontSize: "24px",
+              letterSpacing: "0.8px",
+              textTransform: "uppercase",
+              transition: "opacity 0.2s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          >
+            <span style={{ fontSize: "28px", lineHeight: 1 }}>→</span>
+            <span>ALL NEWS</span>
+          </Link>
         </div>
       </div>
     </section>

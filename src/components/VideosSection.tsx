@@ -102,9 +102,9 @@ const VideosSection = () => {
           <div className="flex gap-6 overflow-hidden py-10">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex-shrink-0 w-[300px] md:w-[420px] animate-pulse">
-                <div className="aspect-video bg-white/5 rounded-lg mb-4" />
-                <div className="h-4 w-1/3 bg-white/5 rounded mb-2" />
-                <div className="h-6 w-full bg-white/5 rounded" />
+                <div className="aspect-video bg-white/5 mb-4" />
+                <div className="h-4 w-1/3 bg-white/5 mb-2" />
+                <div className="h-6 w-full bg-white/5" />
               </div>
             ))}
           </div>
@@ -130,7 +130,7 @@ const VideosSection = () => {
                   className="group block"
                 >
                   {/* Thumbnail Container */}
-                  <div className="relative aspect-video overflow-hidden rounded-xl mb-5 shadow-2xl border border-white/5">
+                  <div className="relative aspect-video overflow-hidden mb-5 shadow-2xl border border-white/5">
                     <img 
                       src={video.thumbnail} 
                       alt={video.title}

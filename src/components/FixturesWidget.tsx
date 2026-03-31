@@ -445,15 +445,13 @@ const FixturesWidget = () => {
       {/* League Table Component below the widget block */}
       <div style={{ padding: "60px 0", background: "#ffffff", borderTop: "1px solid #f0f0f0" }}>
         <div className="container mx-auto px-4">
-          <div className="flex items-end justify-between mb-8 border-b border-[#e5e5e5] pb-4">
+          <div className="flex items-end justify-between mb-8 pb-4">
             <div>
-              <h3 className="font-heading text-3xl md:text-4xl font-bold uppercase tracking-tight text-[#8e160b]">
+              <h2 className="font-heading text-4xl md:text-6xl text-[#141b2b] uppercase tracking-wider leading-none">
                 Men's First Team League Table
-              </h3>
+              </h2>
+              <div className="h-1 w-12 bg-club-gold mt-4" />
             </div>
-            <Link to="/matches" className="font-heading text-sm uppercase tracking-wider text-[#8e160b] hover:opacity-80 border-b border-[#8e160b] pb-0.5 transition-all">
-              League Table
-            </Link>
           </div>
           
           <div className="bg-white border border-[#e5e5e5] rounded-none overflow-hidden shadow-sm">
@@ -480,24 +478,53 @@ const FixturesWidget = () => {
                           isWhk ? "bg-[#8e160b] text-white font-bold" : "hover:bg-[#f8f8f8] text-[#333]"
                         }`}
                       >
-                        <td className="py-4 px-3 text-center font-heading text-sm">{row.position}</td>
-                        <td className="py-4 px-4 font-heading text-sm uppercase tracking-wide">
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row.position}</td>
+                        <td className="py-4 px-4 font-heading text-lg uppercase tracking-widest">
                           {row.name}
                         </td>
-                        <td className="py-4 px-3 text-center font-body text-sm font-medium">{row["all-matches"].played}</td>
-                        <td className="py-4 px-3 text-center font-body text-sm font-medium">{row["all-matches"].won}</td>
-                        <td className="py-4 px-3 text-center font-body text-sm font-medium">{row["all-matches"].drawn}</td>
-                        <td className="py-4 px-3 text-center font-body text-sm font-medium">{row["all-matches"].lost}</td>
-                        <td className="py-4 px-3 text-center font-body text-sm font-medium">{row["all-matches"].for}</td>
-                        <td className="py-4 px-3 text-center font-body text-sm font-medium">{row["all-matches"].against}</td>
-                        <td className="py-4 px-3 text-center font-body text-sm font-medium">{row["all-matches"]["goal-difference"] > 0 ? `+${row["all-matches"]["goal-difference"]}` : row["all-matches"]["goal-difference"]}</td>
-                        <td className="py-4 px-3 text-center font-heading text-sm font-bold">{row["total-points"]}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].played}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].won}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].drawn}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].lost}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].for}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].against}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"]["goal-difference"] > 0 ? `+${row["all-matches"]["goal-difference"]}` : row["all-matches"]["goal-difference"]}</td>
+                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["total-points"]}</td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* League Table CTA - inline styles matching All News / Fixtures & Results */}
+          <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "32px", borderTop: "1px solid #e5e5e5" }}>
+            <Link
+              to="/matches"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "14px",
+                color: "#111",
+                textDecoration: "none",
+                borderTop: "1px solid #292929",
+                borderBottom: "1px solid #292929",
+                padding: "12px 16px 10px",
+                minWidth: "250px",
+                justifyContent: "center",
+                fontFamily: '"Bebas Neue", sans-serif',
+                fontSize: "24px",
+                letterSpacing: "0.8px",
+                textTransform: "uppercase",
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.7")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+            >
+              <span style={{ fontSize: "28px", lineHeight: "1" }}>→</span>
+              <span>LEAGUE TABLE</span>
+            </Link>
           </div>
         </div>
       </div>

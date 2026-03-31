@@ -72,7 +72,7 @@ const DesktopNav = () => {
                   <Link
                     to={item.path}
                     className={`flex items-center gap-1.5 px-6 font-heading uppercase transition-all duration-300 border-b-3 ${
-                      isScrolled ? "py-2 text-sm" : "py-5 text-base"
+                      isScrolled ? "py-2 text-lg" : "py-5 text-xl"
                     } ${
                       isActive || hoveredMenu?.path === item.path
                         ? "border-club-gold text-primary-foreground"
@@ -111,7 +111,7 @@ const DesktopNav = () => {
                   <Link
                     to={item.path}
                     className={`flex items-center gap-1.5 px-6 font-heading uppercase transition-all duration-300 border-b-3 ${
-                      isScrolled ? "py-2 text-sm" : "py-5 text-base"
+                      isScrolled ? "py-2 text-lg" : "py-5 text-xl"
                     } ${
                       isActive || hoveredMenu?.path === item.path
                         ? "border-club-gold text-primary-foreground"
@@ -225,7 +225,7 @@ const MobileNav = () => {
                       <Link
                         to={item.path}
                         onClick={() => setMenuOpen(false)}
-                        className={`font-heading text-sm uppercase tracking-wider ${isActive ? "text-club-gold" : "text-primary-foreground/80"}`}
+                        className={`font-heading text-2xl uppercase tracking-wider ${isActive ? "text-club-gold" : "text-primary-foreground/80"}`}
                       >
                         {item.label}
                       </Link>
@@ -245,7 +245,7 @@ const MobileNav = () => {
                             key={child.path}
                             to={child.path}
                             onClick={() => setMenuOpen(false)}
-                            className="block px-10 py-2.5 font-heading text-xs uppercase tracking-wider text-primary-foreground/70 hover:text-primary-foreground"
+                            className="block px-10 py-2.5 font-heading text-xl uppercase tracking-wider text-primary-foreground/70 hover:text-primary-foreground"
                           >
                             {child.label}
                           </Link>
@@ -261,7 +261,7 @@ const MobileNav = () => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setMenuOpen(false)}
-                  className={`flex items-center px-6 py-4 font-heading text-sm uppercase tracking-wider border-b border-primary-foreground/10 ${
+                  className={`flex items-center px-6 py-4 font-heading text-2xl uppercase tracking-wider border-b border-primary-foreground/10 ${
                     isActive ? "text-club-gold bg-primary/10" : "text-primary-foreground/80"
                   }`}
                 >
@@ -272,7 +272,7 @@ const MobileNav = () => {
             <Link
               to="/admin/login"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center px-6 py-4 font-heading text-sm uppercase tracking-wider border-b border-primary-foreground/10 text-club-gold bg-primary/5"
+              className="flex items-center px-6 py-4 font-heading text-2xl uppercase tracking-wider border-b border-primary-foreground/10 text-club-gold bg-primary/5"
             >
               Admin Login
             </Link>
