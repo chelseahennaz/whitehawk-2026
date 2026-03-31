@@ -288,7 +288,9 @@ const css = `
 
 @media (max-width: 800px) {
   .fw-widget { padding: 16px 0; }
-  .fw-widget .match-block { flex: 1 1 100%; }
+  .fw-widget .match-strip { flex-direction: column; min-height: auto; }
+  .fw-widget .match-block { flex: 1 1 100%; padding-bottom: 20px; }
+  .fw-widget .match-block:not(:first-child) { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); }
   .fw-widget .match-block.is-next { margin-left: 0; border-left: none; border-top: 1px solid rgba(255,255,255,0.08); }
   .fw-widget .countdown { font-size: 48px; }
   .fw-widget .fixtures-link { min-width: 100%; }
