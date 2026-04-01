@@ -62,11 +62,11 @@ const css = `
 }
 
 .fw-widget .match-strip {
-  background: linear-gradient(90deg, #1d1d1f 0%, #141416 18%, #111214 42%, #070708 65%, #101113 100%);
+  background: #141b2b;
   min-height: 236px;
   display: flex;
   align-items: stretch;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 .fw-widget .strip-inner {
@@ -112,23 +112,23 @@ const css = `
   top: 14px;
   left: 24px;
   font-family: "Bebas Neue", sans-serif;
-  font-size: 20px;
-  letter-spacing: 1px;
+  font-size: 26px;
+  letter-spacing: 0.8px;
+  line-height: 1;
   text-transform: uppercase;
   color: #fff;
   pointer-events: none;
 }
 
 .fw-widget .date-box {
-  background: #2a2a2c;
+  background: #0d121c;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding-top: 12px;
-  /* height 100% implicitly passed from flex stretch! spans straight to the bottom */
   text-transform: uppercase;
-  font-family: "Inter", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   letter-spacing: 0.5px;
 }
 
@@ -141,7 +141,7 @@ const css = `
 
 .fw-widget .date-box .month {
   margin-top: 4px;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1;
   color: rgba(255,255,255,0.78);
   font-weight: 400;
@@ -156,11 +156,12 @@ const css = `
 }
 
 .fw-widget .competition {
-  color: var(--muted);
+  color: #facc15;
   text-transform: uppercase;
   letter-spacing: 1.8px;
-  font-size: 11px;
-  margin-bottom: 12px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 14px;
+  margin-bottom: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -170,10 +171,10 @@ const css = `
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-family: "Inter", sans-serif;
-  font-size: 18px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 26px;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1;
   color: #f4f4f4;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -393,7 +394,7 @@ const FixturesWidget = () => {
           <section className="match-strip flex-1">
             <MatchBlock 
               fixture={lastTwo[0]} 
-              label="LAST MATCHES:" 
+              label="LAST MATCHES" 
               btnLabel="MATCHROOM" 
               showScore 
             />
@@ -408,7 +409,7 @@ const FixturesWidget = () => {
           <section className="match-strip flex-1">
             <MatchBlock 
               fixture={nextMatch || undefined} 
-              label="NEXT MATCH:" 
+              label="NEXT MATCH" 
               btnLabel="STANDINGS" 
               showScore={false} 
               isNext

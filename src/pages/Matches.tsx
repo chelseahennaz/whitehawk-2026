@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { MapPin, Calendar, Trophy, Loader2, ChevronRight, LayoutGrid, List } from "lucide-react";
 import { useFWPFixtures, useFWPLeagueTable } from "@/hooks/useFWP";
 import { format, parseISO, getMonth } from "date-fns";
@@ -97,9 +98,12 @@ const MatchCard = ({ match }: { match: FWPFixture }) => {
       </div>
 
       {/* Button footer */}
-      <button className="w-full py-3 bg-muted/40 group-hover:bg-[#8e160b] group-hover:text-white transition-colors border-t border-border/40 font-heading text-[10px] uppercase font-bold tracking-widest">
+      <Link 
+        to={`/match-center/${match.id}`}
+        className="block text-center w-full py-3 bg-muted/40 group-hover:bg-[#8e160b] group-hover:text-white transition-colors border-t border-border/40 font-heading text-[10px] uppercase font-bold tracking-widest"
+      >
         Match Center
-      </button>
+      </Link>
     </motion.div>
   );
 };

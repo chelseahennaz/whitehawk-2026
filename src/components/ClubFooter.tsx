@@ -1,78 +1,123 @@
-import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Facebook, Instagram, Twitter, Youtube, Music2, Linkedin } from "lucide-react";
+import clubBadge from "@/assets/club-badge.png";
+import { useSettings } from "@/hooks/useSupabase";
+
+const footerColumns = [
+  {
+    heading: "Whitehawk FC",
+    links: [
+      { label: "News", path: "/news" },
+      { label: "First Team", path: "/teams/first-team" },
+      { label: "Matches & Results", path: "/matches" },
+      { label: "The Club", path: "/club" },
+      { label: "Tickets", path: "/tickets" },
+      { label: "Hire Our Pitch", path: "/hire-pitch" },
+      { label: "Hire Our Clubhouse", path: "/hire-clubhouse" },
+      { label: "Contact Us", path: "/contact" },
+    ],
+  },
+  {
+    heading: "Partners",
+    links: [
+      { label: "Sponsorship Packages", path: "/sponsor" },
+      { label: "Become a Sponsor", path: "/sponsor" },
+      { label: "Community", path: "/club" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Privacy Policy", path: "/privacy-policy" },
+      { label: "Cookie Policy", path: "/cookie-policy" },
+      { label: "Terms of Use", path: "/terms" },
+    ],
+  },
+];
+
+const SOCIAL_DEFS = [
+  { key: "facebook",  Icon: Facebook, label: "Facebook" },
+  { key: "instagram", Icon: Instagram, label: "Instagram" },
+  { key: "twitter",   Icon: Twitter,   label: "X / Twitter" },
+  { key: "youtube",   Icon: Youtube,   label: "YouTube" },
+  { key: "tiktok",    Icon: Music2,    label: "TikTok" },
+  { key: "linkedin",  Icon: Linkedin,  label: "LinkedIn" },
+] as const;
 
 const ClubFooter = () => {
+  const { data: socialsSettings } = useSettings("club_socials");
+  const socials = socialsSettings?.value || {};
+
+  const activeSocials = SOCIAL_DEFS.filter(({ key }) => !!socials[key]);
+
   return (
-    <footer className="bg-club-dark border-t border-primary-foreground/10">
-      <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="grid md:grid-cols-4 gap-10">
-          <div className="flex items-start gap-4">
-            <img
-              src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png"
-              alt="Whitehawk FC"
-              className="h-16 w-16 object-contain shrink-0"
-            />
-            <div>
-              <h4 className="font-heading text-xl text-primary-foreground tracking-tight font-bold leading-tight">
-                Whitehawk<br />
-                <span className="text-primary">Football Club</span>
-              </h4>
-              <p className="text-primary-foreground/40 text-xs font-body mt-2 leading-relaxed">
-                TerraPura Ground, East Brighton Park<br />
-                Brighton, BN2 5TS
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <h5 className="font-heading text-xs uppercase tracking-[0.2em] text-primary-foreground/60 mb-4 font-semibold">
-              Quick Links
-            </h5>
-            <ul className="space-y-2.5 text-sm text-primary-foreground/40 font-body">
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Fixtures & Results</li>
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Latest News</li>
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">First Team Squad</li>
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Club History</li>
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Tickets</li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="font-heading text-xs uppercase tracking-[0.2em] text-primary-foreground/60 mb-4 font-semibold">
-              The Club
-            </h5>
-            <ul className="space-y-2.5 text-sm text-primary-foreground/40 font-body">
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Hire Our Pitch</li>
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Hire Our Clubhouse</li>
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Sponsor Pack</li>
-              <li className="hover:text-primary-foreground cursor-pointer transition-colors">Contact Us</li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="font-heading text-xs uppercase tracking-[0.2em] text-primary-foreground/60 mb-4 font-semibold">
-              Follow Us
-            </h5>
-            <div className="flex items-center gap-3">
-              {[
-                { Icon: Facebook, href: "#" },
-                { Icon: Instagram, href: "#" },
-                { Icon: Twitter, href: "#" },
-                { Icon: Youtube, href: "#" },
-              ].map(({ Icon, href }, i) => (
-                <a key={i} href={href} className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-foreground/5 border border-primary-foreground/10 text-primary-foreground/50 hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all">
-                  <Icon size={16} />
+    <footer className="bg-[#0d1526]">
+      {/* Social Bar — only shown if at least one link is set */}
+      {activeSocials.length > 0 && (
+        <div className="bg-white border-b border-gray-200 py-8">
+          <div className="container mx-auto px-6 max-w-6xl flex justify-center">
+            <div className="flex items-center gap-7">
+              {activeSocials.map(({ key, Icon, label }) => (
+                <a
+                  key={key}
+                  href={socials[key]}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={label}
+                  className="text-[#141b2b]/50 hover:text-[#8e160b] transition-colors duration-200"
+                >
+                  <Icon size={20} />
                 </a>
               ))}
             </div>
-            <p className="text-primary-foreground/30 text-xs font-body mt-4">
-              @whitehawkfc
-            </p>
           </div>
         </div>
+      )}
 
-        <div className="border-t border-primary-foreground/5 mt-10 pt-8 text-center">
-          <p className="text-primary-foreground/25 text-xs font-body">
-            © 2026 Whitehawk FC. All rights reserved. | Made by Henry Summers
+      {/* Main Footer Grid */}
+      <div className="container mx-auto px-6 max-w-6xl py-14">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+          {footerColumns.map((col) => (
+            <div key={col.heading}>
+              <h5 className="font-heading text-[11px] uppercase tracking-[0.18em] text-[#8e160b] mb-5 font-semibold">
+                {col.heading}
+              </h5>
+              <ul className="space-y-3">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      to={link.path}
+                      className="text-white/50 hover:text-white text-sm font-body transition-colors duration-200 leading-snug"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+
+          {/* Badge Column */}
+          <div className="flex items-start justify-end">
+            <Link to="/">
+              <img
+                src={clubBadge}
+                alt="Whitehawk FC"
+                className="h-28 w-28 object-contain opacity-90 hover:opacity-100 transition-opacity duration-300"
+              />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/8">
+        <div className="container mx-auto px-6 max-w-6xl py-5 flex flex-col md:flex-row items-center justify-between gap-3">
+          <p className="text-white/25 text-xs font-body">
+            © {new Date().getFullYear()} Whitehawk Football Club. All rights reserved.
+          </p>
+          <p className="text-white/20 text-xs font-body">
+            TerraPura Ground, East Brighton Park, Brighton, BN2 5TS
           </p>
         </div>
       </div>

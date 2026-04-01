@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getFixtures, getLeagueTable } from "@/lib/fwp";
+import { getFixtures, getLeagueTable, getMatchDetails } from "@/lib/fwp";
 import { parseISO, isAfter, startOfDay } from "date-fns";
 
 export const useFWPFixtures = () => {
@@ -7,6 +7,26 @@ export const useFWPFixtures = () => {
     queryKey: ["fwp-fixtures"],
     queryFn: getFixtures,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+};
+
+export const useFWPMatchDetails = (matchId: string) => {
+  return useQuery({
+    queryKey: ["fwp-match", matchId],
+    queryFn: () => getMatchDetails(matchId),
+    refetchInterval: (query) => {
+      const match = query.state.data;
+      if (!match) return false;
+      
+      const isFinished = 
+        match.status?.short === "FT" || 
+        match.status?.short === "AET" || 
+        match.status?.short === "Pens" || 
+        match.status?.full?.includes("Full Time");
+        
+      return isFinished ? false : 1000 * 30; // Poll every 30s if live
+    },
+    enabled: !!matchId,
   });
 };
 

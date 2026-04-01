@@ -8,7 +8,8 @@ import {
   LayoutDashboard,
   Megaphone,
   Settings as SettingsIcon,
-  CheckCircle2
+  CheckCircle2,
+  Share2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +25,7 @@ const Settings = () => {
   const { data: heroSettings, isLoading: isHeroLoading, refetch: refetchHero } = useSettings("homepage_hero");
   const { data: tickerSettings, isLoading: isTickerLoading, refetch: refetchTicker } = useSettings("fixtures_ticker");
   const { data: brandSettings, isLoading: isBrandLoading, refetch: refetchBrand } = useSettings("club_brand");
+  const { data: socialsSettings, isLoading: isSocialsLoading, refetch: refetchSocials } = useSettings("club_socials");
   
   const [mode, setMode] = useState<string>("match");
   const [customImageUrl, setCustomImageUrl] = useState<string>("");
@@ -36,6 +38,14 @@ const Settings = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [socials, setSocials] = useState({
+    facebook: "",
+    instagram: "",
+    twitter: "",
+    youtube: "",
+    tiktok: "",
+    linkedin: "",
+  });
 
   useEffect(() => {
     if (heroSettings?.value) {
@@ -59,6 +69,19 @@ const Settings = () => {
       setLogoUrl(brandSettings.value.logo_url || "");
     }
   }, [brandSettings]);
+
+  useEffect(() => {
+    if (socialsSettings?.value) {
+      setSocials({
+        facebook: socialsSettings.value.facebook || "",
+        instagram: socialsSettings.value.instagram || "",
+        twitter: socialsSettings.value.twitter || "",
+        youtube: socialsSettings.value.youtube || "",
+        tiktok: socialsSettings.value.tiktok || "",
+        linkedin: socialsSettings.value.linkedin || "",
+      });
+    }
+  }, [socialsSettings]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -123,10 +146,27 @@ const Settings = () => {
         if (insertError) throw insertError;
       }
 
+      // Save socials setting
+      const { data: socialsUpdateData, error: socialsUpdateError } = await supabase
+        .from("site_settings")
+        .update({ value: socials, updated_at: new Date().toISOString() })
+        .eq("key", "club_socials")
+        .select();
+
+      if (socialsUpdateError) throw socialsUpdateError;
+
+      if (!socialsUpdateData || socialsUpdateData.length === 0) {
+        const { error: insertError } = await supabase
+          .from("site_settings")
+          .insert({ key: "club_socials", value: socials });
+        if (insertError) throw insertError;
+      }
+
       toast.success("Settings updated successfully");
       refetchHero();
       refetchTicker();
       refetchBrand();
+      refetchSocials();
     } catch (error) {
       console.error("Save failed:", error);
       toast.error("Failed to update settings");
@@ -201,7 +241,7 @@ const Settings = () => {
     }
   };
 
-  if (isHeroLoading || isTickerLoading || isBrandLoading) {
+  if (isHeroLoading || isTickerLoading || isBrandLoading || isSocialsLoading) {
     return (
       <div className="flex h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -570,6 +610,42 @@ const Settings = () => {
                      </div>
                   )}
                </div>
+            </CardContent>
+          </Card>
+          {/* Social Media Links */}
+          <Card className="border-border/50 shadow-sm overflow-hidden bg-card">
+            <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <Share2 size={20} />
+                </div>
+                <div>
+                  <CardTitle className="font-heading text-xl font-bold uppercase tracking-tight">Social Media</CardTitle>
+                  <CardDescription className="text-xs">Links appear in the footer. Leave blank to hide an icon.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {([
+                  { key: "facebook",  label: "Facebook",  placeholder: "https://facebook.com/whitehawkfc" },
+                  { key: "instagram", label: "Instagram", placeholder: "https://instagram.com/whitehawkfc" },
+                  { key: "twitter",   label: "X / Twitter", placeholder: "https://x.com/whitehawkfc" },
+                  { key: "youtube",   label: "YouTube",   placeholder: "https://youtube.com/@whitehawkfc" },
+                  { key: "tiktok",    label: "TikTok",    placeholder: "https://tiktok.com/@whitehawkfc" },
+                  { key: "linkedin",  label: "LinkedIn",  placeholder: "https://linkedin.com/company/whitehawk-fc" },
+                ] as { key: keyof typeof socials; label: string; placeholder: string }[]).map(({ key, label, placeholder }) => (
+                  <div key={key} className="space-y-1.5">
+                    <Label className="text-[10px] font-heading uppercase tracking-widest font-bold">{label}</Label>
+                    <Input
+                      placeholder={placeholder}
+                      value={socials[key]}
+                      onChange={(e) => setSocials((prev) => ({ ...prev, [key]: e.target.value }))}
+                      className="font-body text-sm h-10"
+                    />
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>

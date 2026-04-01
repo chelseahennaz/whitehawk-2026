@@ -1,5 +1,5 @@
 import { useSponsors } from "@/hooks/useSupabase";
-import { Loader2, Facebook, Instagram, Twitter, Youtube, Music2, Linkedin } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Sponsor } from "@/hooks/useSupabase";
 
@@ -126,27 +126,7 @@ const SponsorsBar = () => {
           </div>
         )}
 
-        {/* Social Bar Section */}
-        <div className="py-12 flex items-center justify-center">
-          <div className="flex items-center gap-6 md:gap-8">
-            {[
-              { Icon: Facebook, href: "#" },
-              { Icon: Instagram, href: "#" },
-              { Icon: Twitter, href: "#" },
-              { Icon: Youtube, href: "#" },
-              { Icon: Music2, href: "#" }, // TikTok
-              { Icon: Linkedin, href: "#" },
-            ].map(({ Icon, href }, i) => (
-              <a 
-                key={i} 
-                href={href} 
-                className="text-[#141b2b] hover:text-[#8e160b] transition-all duration-300 transform hover:scale-110"
-              >
-                <Icon size={22} className={i === 2 ? "fill-current" : ""} />
-              </a>
-            ))}
-          </div>
-        </div>
+
       </div>
     </section>
   );

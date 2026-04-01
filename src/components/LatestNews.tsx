@@ -26,12 +26,12 @@ const LatestNews = () => {
   const itemsToShow = newsItems?.slice(0, 8) || [];
 
   return (
-    <section className="py-16 md:py-24 bg-[#141b2b] overflow-hidden">
+    <section className="py-16 md:py-24 bg-white overflow-hidden border-t border-gray-100">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="flex items-end justify-between mb-12">
           <div>
-            <h2 className="font-heading text-4xl md:text-6xl text-white uppercase tracking-wider leading-none">
+            <h2 className="font-heading text-4xl md:text-6xl text-[#141b2b] uppercase tracking-wider leading-none">
               Latest News
             </h2>
             <div className="h-1 w-12 bg-club-gold mt-4" />
@@ -39,13 +39,13 @@ const LatestNews = () => {
           <div className="flex items-center gap-3 md:flex hidden">
             <button 
               onClick={() => scroll("left")} 
-              className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all rounded-full"
+              className="w-12 h-12 flex items-center justify-center bg-gray-50 border border-gray-200 text-[#141b2b] hover:bg-gray-100 transition-all rounded-full"
             >
               <ChevronLeft size={24} />
             </button>
             <button 
               onClick={() => scroll("right")} 
-              className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all rounded-full"
+              className="w-12 h-12 flex items-center justify-center bg-gray-50 border border-gray-200 text-[#141b2b] hover:bg-gray-100 transition-all rounded-full"
             >
               <ChevronRight size={24} />
             </button>
@@ -93,14 +93,14 @@ const LatestNews = () => {
                     <div className="px-1">
                       <div className="flex items-center gap-2 font-heading text-xs md:text-sm tracking-widest mb-2">
                         <span className="text-club-gold font-bold">CLUB NEWS</span>
-                        <span className="text-white/20">•</span>
-                        <span className="text-white/60 font-medium">{day} {month} {year}</span>
+                        <span className="text-gray-300">•</span>
+                        <span className="text-gray-400 font-medium">{day} {month} {year}</span>
                       </div>
-                      <h3 className="text-white font-heading text-xl md:text-2xl line-clamp-2 leading-[1.1] group-hover/card:text-primary transition-colors duration-300 drop-shadow-md uppercase">
+                      <h3 className="text-[#141b2b] font-heading text-xl md:text-2xl line-clamp-2 leading-[1.1] group-hover/card:text-[#8e160b] transition-colors duration-300 uppercase">
                         {item.title}
                       </h3>
                       {item.excerpt && (
-                        <p className="text-white/70 text-sm leading-relaxed line-clamp-2 mt-2 font-body">
+                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 mt-2 font-body">
                           {item.excerpt}
                         </p>
                       )}
@@ -113,17 +113,17 @@ const LatestNews = () => {
         </div>
 
         {/* All News CTA - same arrow-button style as Fixtures & Results */}
-        <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "32px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "32px", borderTop: "1px solid rgba(0,0,0,0.05)" }}>
           <Link
             to="/news"
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: "14px",
-              color: "#fff",
+              color: "#141b2b",
               textDecoration: "none",
-              borderTop: "1px solid rgba(255,255,255,0.4)",
-              borderBottom: "1px solid rgba(255,255,255,0.4)",
+              borderTop: "1px solid rgba(20,27,43,0.4)",
+              borderBottom: "1px solid rgba(20,27,43,0.4)",
               padding: "12px 16px 10px",
               minWidth: "250px",
               justifyContent: "center",

@@ -74,66 +74,66 @@ const MatchHero = ({ customImage, bgType = "image", bgColor = "#8e160b", imagePo
   const competition = nextMatch.competition.name.includes("Isthmian") ? "Isthmian League Premier" : nextMatch.competition.name;
 
   return (
-    <div className="relative h-full w-full overflow-hidden flex flex-col justify-center">
-      {/* Background */}
+    <div className="relative h-full w-full overflow-hidden flex flex-col justify-end pt-14 pb-16 md:pb-24">
       <div className="absolute inset-0">
         {bgType === "color" ? (
           <div className="w-full h-full" style={{ backgroundColor: bgColor }} />
         ) : (
           <>
-            <img
-              src={customImage || heroAtmosphere}
-              alt=""
-              className="w-full h-full object-cover"
+            <img 
+              src={customImage || heroAtmosphere} 
+              alt="" 
+              className="w-full h-full object-cover" 
               style={{ objectPosition: `center ${imagePosition}%` }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
+            {/* Gradient fades from left-to-right to give text on the left perfect contrast */}
+            <div className="absolute inset-0 bg-gradient-to-t from-club-dark via-club-dark/90 to-black/40 md:bg-gradient-to-r md:from-black/95 md:via-black/70 md:to-transparent" />
           </>
         )}
       </div>
 
-      {/* Floating Match Panel — left side, same style as FixturesWidget */}
-      <div className="relative container mx-auto px-4 md:px-12 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="inline-flex flex-col max-w-[520px]"
-          style={{ background: "linear-gradient(135deg, #1d1d1f 0%, #111214 60%, #070708 100%)", boxShadow: "0 25px 60px rgba(0,0,0,0.5)" }}
-        >
-          {/* Top label */}
-          <div className="px-5 pt-4 pb-0">
-            <span className="font-heading text-xs tracking-widest uppercase text-white/40">Next Match</span>
+      <div className="relative container mx-auto px-4 md:px-12 flex flex-col justify-end h-full max-w-7xl">
+        
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="flex items-stretch gap-6 md:gap-10 mb-10 md:mb-14">
+          
+          {/* Gigantic Date Box aligned left */}
+          <div className="bg-[#8e160b] flex flex-col items-center justify-start pt-4 md:pt-6 px-4 md:px-6 border-l-[6px] border-[#141b2b] shadow-2xl min-w-[80px] md:min-w-[110px]">
+            <span className="font-heading text-4xl md:text-[60px] text-white leading-none">{format(parseISO(nextMatch.date), "dd")}</span>
+            <span className="font-heading text-xl md:text-[24px] text-white/70 mt-2 md:mt-3">{format(parseISO(nextMatch.date), "MMM")}</span>
           </div>
 
-          {/* Date + Teams row */}
-          <div className="flex items-stretch">
-            {/* Date box */}
-            <div className="bg-[#2a2a2c] flex flex-col items-center justify-start pt-4 px-5 md:px-6 border-r border-white/5 min-w-[66px] md:min-w-[80px]">
-              <span className="font-heading text-3xl md:text-4xl text-white leading-none">{format(parseISO(nextMatch.date), "dd")}</span>
-              <span className="font-heading text-sm md:text-base text-white/70 mt-1">{format(parseISO(nextMatch.date), "MMM")}</span>
-            </div>
-
-            {/* Match info */}
-            <div className="flex flex-col justify-center px-5 py-4 flex-1">
-              <p className="font-heading text-[10px] md:text-xs text-white/40 tracking-widest uppercase mb-2">{competition} · {nextMatch.time}</p>
-              <div className="font-heading text-2xl md:text-3xl text-white uppercase tracking-widest leading-tight">
-                <span className="block">{homeTeam.name}</span>
-                <span className="block">{awayTeam.name}</span>
-              </div>
+          {/* Teams Text Block */}
+          <div className="flex flex-col justify-center">
+            <p className="font-heading text-xs md:text-lg text-[#facc15] tracking-[0.2em] mb-2 md:mb-4 uppercase">
+              {competition} · {nextMatch.time}
+            </p>
+            <div className="font-heading text-4xl md:text-[70px] lg:text-[85px] leading-[0.9] text-white drop-shadow-xl uppercase">
+              <span className="block truncate">{homeTeam.name}</span>
+              <span className="block truncate">{awayTeam.name}</span>
             </div>
           </div>
 
-          {/* Red Countdown — matches widget timer-box */}
-          <div className="bg-[#8e160b] px-5 py-4 flex items-center justify-between border-t border-white/10">
-            <div className="font-heading text-3xl md:text-4xl text-white tracking-wide whitespace-nowrap">
-              {String(countdown.days).padStart(2,'0')}:{String(countdown.hours).padStart(2,'0')}:{String(countdown.mins).padStart(2,'0')}:{String(countdown.secs).padStart(2,'0')}
-            </div>
-            <Link to="/matches" className="font-heading text-xs uppercase tracking-widest text-white/60 hover:text-white transition-colors ml-4 whitespace-nowrap">
-              → MATCH CENTRE
-            </Link>
-          </div>
         </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-wrap items-center gap-6 md:gap-10">
+          
+          <Link to="/matches" className="bg-transparent border border-white/60 hover:bg-white hover:text-black text-white font-heading text-lg md:text-xl uppercase tracking-wider px-8 py-3 transition-all whitespace-nowrap">
+            Match Centre
+          </Link>
+
+          {/* Simple Inline Countdown */}
+          <div className="flex items-center gap-4 bg-black/40 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 border border-white/10">
+             <div className="text-center"><span className="font-heading text-2xl md:text-3xl text-white">{String(countdown.days).padStart(2,'0')}</span><span className="block text-[8px] md:text-[10px] text-white/50 font-heading tracking-widest mt-0.5">DAYS</span></div>
+             <span className="font-heading text-xl md:text-2xl text-white/20 mb-3">:</span>
+             <div className="text-center"><span className="font-heading text-2xl md:text-3xl text-white">{String(countdown.hours).padStart(2,'0')}</span><span className="block text-[8px] md:text-[10px] text-white/50 font-heading tracking-widest mt-0.5">HRS</span></div>
+             <span className="font-heading text-xl md:text-2xl text-white/20 mb-3">:</span>
+             <div className="text-center"><span className="font-heading text-2xl md:text-3xl text-white">{String(countdown.mins).padStart(2,'0')}</span><span className="block text-[8px] md:text-[10px] text-white/50 font-heading tracking-widest mt-0.5">MIN</span></div>
+             <span className="font-heading text-xl md:text-2xl text-white/20 mb-3">:</span>
+             <div className="text-center"><span className="font-heading text-2xl md:text-3xl text-white">{String(countdown.secs).padStart(2,'0')}</span><span className="block text-[8px] md:text-[10px] text-white/50 font-heading tracking-widest mt-0.5">SEC</span></div>
+          </div>
+          
+        </motion.div>
+
       </div>
     </div>
   );

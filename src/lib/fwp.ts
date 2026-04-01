@@ -56,6 +56,46 @@ export interface FWPGoalscorer {
   goals?: any[]; // Array of goal objects
 }
 
+export interface FWPGoal {
+  minute: number;
+  description: string;
+  player: {
+    id: number;
+    "first-name": string;
+    "last-name": string;
+  };
+  sort: number;
+}
+
+export interface FWPLineupPlayer {
+  shirt: number;
+  captain?: boolean;
+  cautioned?: { minute: number };
+  "sent-off"?: { minute: number };
+  "substituted-off"?: { minute: number };
+  "substituted-on"?: { minute: number };
+  player: {
+    id: number;
+    "first-name": string;
+    "last-name": string;
+  };
+  sort: number;
+}
+
+export interface FWPMatchDetails extends FWPFixture {
+  referee?: string;
+  "home-team": FWPTeam & {
+    goals?: FWPGoal[];
+    "line-up"?: FWPLineupPlayer[];
+    substitutes?: FWPLineupPlayer[];
+  };
+  "away-team": FWPTeam & {
+    goals?: FWPGoal[];
+    "line-up"?: FWPLineupPlayer[];
+    substitutes?: FWPLineupPlayer[];
+  };
+}
+
 const API_KEY = import.meta.env.VITE_FWP_API_KEY;
 const TEAM_ID = import.meta.env.VITE_FWP_TEAM_ID;
 // Route through local Vite proxy in dev, or public CORS proxy in prod if deployed statically
@@ -88,6 +128,12 @@ export const getFixtures = async (): Promise<FWPFixture[]> => {
   
   const data = await fetchFWP(`fixtures-results.json?team=${TEAM_ID}`);
   return data["fixtures-results"]?.matches || [];
+};
+
+export const getMatchDetails = async (matchId: string): Promise<FWPMatchDetails> => {
+  const data = await fetchFWP(`match.json?match=${matchId}`);
+  if (!data.match) throw new Error("Match details not found in response");
+  return data.match;
 };
 
 export const getLeagueTable = async (): Promise<FWPLeagueTableRow[]> => {

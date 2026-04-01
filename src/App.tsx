@@ -12,6 +12,7 @@ import Sponsor from "@/pages/Sponsor";
 import News from "@/pages/News";
 import PostDetail from "@/pages/PostDetail";
 import Contact from "@/pages/Contact";
+import MatchCenter from "@/pages/MatchCenter";
 import NotFound from "@/pages/NotFound";
 
 // Admin & Layouts
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/news" element={<News />} />
             <Route path="/news/:slug" element={<PostDetail />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/match-center/:id" element={<MatchCenter />} />
           </Route>
           
           {/* Admin Routes */}
