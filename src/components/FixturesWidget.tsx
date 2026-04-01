@@ -461,10 +461,15 @@ const FixturesWidget = () => {
                 <thead>
                   <tr className="bg-[#141b2b] text-white">
                     <th className="py-4 px-3 font-heading text-sm uppercase tracking-widest text-center w-12">#</th>
-                    <th className="py-4 px-4 font-heading text-sm uppercase tracking-widest min-w-[200px]">Team</th>
-                    {["P", "W", "D", "L", "F", "A", "+/-", "Pts"].map(h => (
-                      <th key={h} className="py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">{h}</th>
-                    ))}
+                    <th className="py-4 px-4 font-heading text-sm uppercase tracking-widest min-w-[140px] md:min-w-[200px]">Team</th>
+                    <th className="py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">P</th>
+                    <th className="py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">W</th>
+                    <th className="py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">D</th>
+                    <th className="py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">L</th>
+                    <th className="hidden md:table-cell py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">F</th>
+                    <th className="hidden md:table-cell py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">A</th>
+                    <th className="hidden md:table-cell py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">+/-</th>
+                    <th className="py-4 px-3 font-heading text-sm uppercase tracking-widest text-center">Pts</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -487,9 +492,9 @@ const FixturesWidget = () => {
                         <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].won}</td>
                         <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].drawn}</td>
                         <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].lost}</td>
-                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].for}</td>
-                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].against}</td>
-                        <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"]["goal-difference"] > 0 ? `+${row["all-matches"]["goal-difference"]}` : row["all-matches"]["goal-difference"]}</td>
+                        <td className="hidden md:table-cell py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].for}</td>
+                        <td className="hidden md:table-cell py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"].against}</td>
+                        <td className="hidden md:table-cell py-4 px-3 text-center font-heading text-lg tracking-widest">{row["all-matches"]["goal-difference"] > 0 ? `+${row["all-matches"]["goal-difference"]}` : row["all-matches"]["goal-difference"]}</td>
                         <td className="py-4 px-3 text-center font-heading text-lg tracking-widest">{row["total-points"]}</td>
                       </tr>
                     );

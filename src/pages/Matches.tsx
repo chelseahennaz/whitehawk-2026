@@ -230,9 +230,9 @@ const Matches = () => {
                         <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">P</th>
                         <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">W</th>
                         <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">D</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">L</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">GD</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">Pts</th>
+                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground uppercase">L</th>
+                        <th className="hidden md:table-cell py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground uppercase">GD</th>
+                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground uppercase">Pts</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -251,7 +251,7 @@ const Matches = () => {
                               <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"].won}</td>
                               <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"].drawn}</td>
                               <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"].lost}</td>
-                              <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"]["goal-difference"]}</td>
+                              <td className="hidden md:table-cell py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"]["goal-difference"]}</td>
                               <td className="py-3 px-4 text-center font-heading text-xs font-bold text-foreground">{row["total-points"]}</td>
                             </tr>
                           );
