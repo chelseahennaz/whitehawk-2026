@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Calendar, Trophy, Loader2, ChevronRight, LayoutGrid, List } from "lucide-react";
-import { useFWPFixtures, useFWPLeagueTable } from "@/hooks/useFWP";
+import { MapPin, Calendar, Trophy, Loader2, ChevronRight, LayoutGrid, List, Radio, XCircle, PauseCircle } from "lucide-react";
+import { useFWPFixtures, useFWPLeagueTable, useFWPCompetitionFixtures } from "@/hooks/useFWP";
+import { isMatchLive } from "@/lib/fwp";
 import { format, parseISO, getMonth } from "date-fns";
 import type { FWPFixture } from "@/lib/fwp";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,14 +40,22 @@ const MatchCard = ({ match }: { match: FWPFixture }) => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white border border-border/60 rounded-sm flex flex-col shadow-sm hover:shadow-md transition-all duration-300 group"
+      className={`bg-white border ${match.status?.short === 'CANC' ? 'border-red-400 ring-1 ring-red-400' : match.status?.short === 'P-P' ? 'border-amber-400 ring-1 ring-amber-400' : 'border-border/60'} rounded-sm flex flex-col shadow-sm hover:shadow-md transition-all duration-300 group`}
     >
       {/* Label section */}
       <div className="px-4 py-3 border-b border-border/40 flex items-center justify-between">
         <span className="text-[10px] font-heading font-bold uppercase tracking-widest text-[#8e160b]">
           {match.competition.name.replace("Isthmian League", "").trim() || "League"}
         </span>
-        {isPlayed && (
+        {match.status?.short === 'CANC' ? (
+          <span className="text-[10px] font-heading uppercase bg-red-600 text-white font-black px-2 py-0.5 rounded tracking-wider">
+            CANCELLED
+          </span>
+        ) : match.status?.short === 'P-P' ? (
+          <span className="text-[10px] font-heading uppercase bg-amber-500 text-white font-black px-2 py-0.5 rounded tracking-wider">
+            POSTPONED
+          </span>
+        ) : isPlayed && (
            <span className="text-[10px] font-heading uppercase text-muted-foreground font-bold italic">FT</span>
         )}
       </div>
@@ -69,6 +78,14 @@ const MatchCard = ({ match }: { match: FWPFixture }) => {
                 <span className="text-2xl font-heading font-black">{homeTeam.score}</span>
                 <span className="text-xl font-heading text-muted-foreground">-</span>
                 <span className="text-2xl font-heading font-black">{awayTeam.score}</span>
+              </div>
+            ) : match.status?.short === 'CANC' ? (
+              <div className="bg-red-100 border border-red-300 text-red-700 px-3 py-1 rounded-full text-center">
+                <span className="text-xs font-heading font-black tracking-wider">CANCELLED</span>
+              </div>
+            ) : match.status?.short === 'P-P' ? (
+              <div className="bg-amber-100 border border-amber-300 text-amber-800 px-3 py-1 rounded-full text-center">
+                <span className="text-xs font-heading font-black tracking-wider">P - P</span>
               </div>
             ) : (
               <div className="bg-muted px-3 py-1 rounded-full">
@@ -98,24 +115,66 @@ const MatchCard = ({ match }: { match: FWPFixture }) => {
       </div>
 
       {/* Button footer */}
-      <Link 
-        to={`/match-center/${match.id}`}
-        className="block text-center w-full py-3 bg-muted/40 group-hover:bg-[#8e160b] group-hover:text-white transition-colors border-t border-border/40 font-heading text-[10px] uppercase font-bold tracking-widest"
-      >
-        Match Center
-      </Link>
+      {(() => {
+        const statusShort = match.status?.short;
+        const live = isMatchLive(match);
+
+        if (statusShort === 'CANC') {
+          return (
+            <div className="flex items-center justify-center gap-2 w-full py-3 border-t border-red-200 bg-red-600 text-white font-heading text-[10px] uppercase font-bold tracking-widest">
+              <XCircle size={12} />
+              Match Cancelled
+            </div>
+          );
+        }
+
+        if (statusShort === 'P-P') {
+          return (
+            <div className="flex items-center justify-center gap-2 w-full py-3 border-t border-amber-200 bg-amber-500 text-white font-heading text-[10px] uppercase font-bold tracking-widest">
+              <PauseCircle size={12} />
+              Postponed — Check Back for Updates
+            </div>
+          );
+        }
+
+        const linkTo = isPlayed ? `/match-report/${match.id}` : `/match-center/${match.id}`;
+        return (
+          <Link 
+            to={linkTo}
+            className={`flex items-center justify-center gap-2 w-full py-3 transition-colors border-t border-border/40 font-heading text-[10px] uppercase font-bold tracking-widest ${
+              live 
+                ? 'bg-red-600 text-white animate-pulse' 
+                : 'bg-muted/40 group-hover:bg-[#8e160b] group-hover:text-white'
+            }`}
+          >
+            {live ? (
+              <>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                </span>
+                Match Center — LIVE
+              </>
+            ) : isPlayed ? (
+              'Match Report'
+            ) : (
+              'Match Preview'
+            )}
+          </Link>
+        );
+      })()}
     </motion.div>
   );
 };
 
 const Matches = () => {
-  const [activeMonth, setActiveMonth] = useState<string | number>("all");
+  const currentMonth = new Date().getMonth();
+  const [activeMonth, setActiveMonth] = useState<string | number>(currentMonth);
   const [activeComp, setActiveComp] = useState<string>("all");
-  const [showTable, setShowTable] = useState(false);
 
   const { data: allMatches = [], isLoading: fixturesLoading } = useFWPFixtures();
-  const { data: leagueTable = [], isLoading: tableLoading } = useFWPLeagueTable();
-
+  const { data: tableResponse, isLoading: tableLoading } = useFWPLeagueTable();
+  
   const sortedMatches = useMemo(() => {
     return [...allMatches].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [allMatches]);
@@ -143,7 +202,7 @@ const Matches = () => {
             Fixtures & Results
           </h1>
           <p className="font-heading text-2xl md:text-3xl font-bold text-muted-foreground uppercase">
-            2025/26 Season
+            2026/27 Season
           </p>
         </div>
       </section>
@@ -190,18 +249,14 @@ const Matches = () => {
               </button>
             ))}
             
-            {/* Table Toggle */}
-            <button
-               onClick={() => setShowTable(!showTable)}
-               className={`ml-4 flex items-center gap-2 px-4 py-1.5 rounded-full font-heading text-[10px] uppercase tracking-widest border transition-all ${
-                showTable 
-                  ? "bg-[#8e160b] text-white border-[#8e160b]" 
-                  : "bg-white text-muted-foreground border-[#8e160b]/30 text-[#8e160b] hover:bg-[#8e160b]/5"
-              }`}
+            {/* Table Link */}
+            <Link
+               to="/standings"
+               className="ml-4 flex items-center gap-2 px-4 py-1.5 rounded-full font-heading text-[10px] uppercase tracking-widest border transition-all bg-white text-muted-foreground border-[#8e160b]/30 text-[#8e160b] hover:bg-[#8e160b]/5"
             >
               <Trophy size={12} />
-              {showTable ? "Hide Table" : "View Table"}
-            </button>
+              View Standings
+            </Link>
           </div>
         </div>
       </section>
@@ -209,86 +264,30 @@ const Matches = () => {
       {/* Main Content Area */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <AnimatePresence mode="wait">
-            {showTable ? (
-               <motion.div 
-                key="table"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                className="bg-white border border-border rounded-lg overflow-hidden shadow-sm"
-              >
-                <div className="bg-black px-6 py-4 flex items-center justify-between">
-                  <h3 className="font-heading text-sm uppercase tracking-widest text-white">Isthmian Premier Division Table</h3>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-muted/50 border-b border-border">
-                        <th className="py-3 px-4 text-left font-heading text-[10px] uppercase tracking-widest text-muted-foreground w-8">#</th>
-                        <th className="py-3 px-4 text-left font-heading text-[10px] uppercase tracking-widest text-muted-foreground">Team</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">P</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">W</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground">D</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground uppercase">L</th>
-                        <th className="hidden md:table-cell py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground uppercase">GD</th>
-                        <th className="py-3 px-4 text-center font-heading text-[10px] uppercase tracking-widest text-muted-foreground uppercase">Pts</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableLoading ? (
-                        <tr><td colSpan={8} className="py-20 text-center"><Loader2 className="animate-spin text-[#8e160b] mx-auto" size={32} /></td></tr>
-                      ) : (
-                        leagueTable.map((row) => {
-                          const isWhk = row.name === "Whitehawk" || row.id === 468;
-                          return (
-                            <tr key={row.id} className={`border-b border-border text-sm transition-colors ${isWhk ? "bg-[#8e160b]/5 font-bold" : "hover:bg-muted/30"}`}>
-                              <td className="py-3 px-4 font-heading text-xs text-muted-foreground">{row.position}</td>
-                              <td className={`py-3 px-4 font-heading text-sm uppercase tracking-wide ${isWhk ? "text-[#8e160b] font-bold" : "text-foreground"}`}>
-                                {row.name}
-                              </td>
-                              <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"].played}</td>
-                              <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"].won}</td>
-                              <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"].drawn}</td>
-                              <td className="py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"].lost}</td>
-                              <td className="hidden md:table-cell py-3 px-4 text-center font-body text-xs text-muted-foreground">{row["all-matches"]["goal-difference"]}</td>
-                              <td className="py-3 px-4 text-center font-heading text-xs font-bold text-foreground">{row["total-points"]}</td>
-                            </tr>
-                          );
-                        })
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </motion.div>
+          <motion.div 
+            key="grid"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {fixturesLoading ? (
+              <div className="p-20 flex flex-col items-center gap-4 text-muted-foreground">
+                <Loader2 className="w-10 h-10 animate-spin text-[#8e160b]" />
+                <p className="font-heading uppercase tracking-widest text-xs">Live Match Syncing...</p>
+              </div>
+            ) : filteredMatches.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {filteredMatches.map((m) => (
+                  <MatchCard key={m.id} match={m} />
+                ))}
+              </div>
             ) : (
-              <motion.div 
-                key="grid"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                {fixturesLoading ? (
-                  <div className="p-20 flex flex-col items-center gap-4 text-muted-foreground">
-                    <Loader2 className="w-10 h-10 animate-spin text-[#8e160b]" />
-                    <p className="font-heading uppercase tracking-widest text-xs">Live Match Syncing...</p>
-                  </div>
-                ) : filteredMatches.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {filteredMatches.map((m) => (
-                      <MatchCard key={m.id} match={m} />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="py-32 text-center">
-                    <p className="font-heading text-muted-foreground uppercase tracking-widest text-sm">
-                      No matches found for this period.
-                    </p>
-                  </div>
-                )}
-              </motion.div>
+              <div className="py-32 text-center">
+                <p className="font-heading text-muted-foreground uppercase tracking-widest text-sm">
+                  No matches found for this period.
+                </p>
+              </div>
             )}
-          </AnimatePresence>
+          </motion.div>
         </div>
       </section>
     </div>

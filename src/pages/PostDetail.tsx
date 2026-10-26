@@ -1,13 +1,20 @@
 import { useParams, Link } from "react-router-dom";
-import { usePostBySlug } from "@/hooks/useSupabase";
+import { usePostBySlug, useSponsors } from "@/hooks/useSupabase";
 import { Calendar, ArrowLeft, Loader2, Share2, Tag } from "lucide-react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useParsedFixtures } from "@/hooks/useFWP";
 
 const PostDetail = () => {
   const { slug } = useParams();
   const { data: post, isLoading } = usePostBySlug(slug || "");
+  const { data: sponsors } = useSponsors();
+  const { fixtures, isLoading: isFixturesLoading } = useParsedFixtures();
+  
+  const eliteSponsors = sponsors?.filter(s => s.tier === 'Elite' && s.is_visible !== false) || [];
+  const displaySponsors = eliteSponsors.slice(0, 3);
+  const nextHomeMatch = fixtures?.find(m => m["home-team"]?.name?.toLowerCase()?.includes("whitehawk") || m["home-team"]?.id === 468) || null;
 
   if (isLoading) {
     return (
@@ -34,19 +41,27 @@ const PostDetail = () => {
   return (
     <>
       {/* Hero Header */}
-      <section className="relative h-[65vh] min-h-[400px] w-full overflow-hidden">
-        <div className="absolute inset-0 club-gradient opacity-20" />
+      <section 
+        className={post.image_url 
+          ? "relative h-[65vh] min-h-[400px] w-full overflow-hidden" 
+          : "bg-[#141b2b] pt-32 pb-16 w-full"
+        }
+      >
         {post.image_url && (
-          <img 
-            src={post.image_url} 
-            alt={post.title} 
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          <>
+            <div className="absolute inset-0 club-gradient opacity-20" />
+            <img 
+              src={post.image_url} 
+              alt={post.title} 
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: `center ${post.image_offset !== undefined && post.image_offset !== null ? post.image_offset : 50}%` }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/30" />
+          </>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-black/30" />
         
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-12">
-          <div className="container mx-auto">
+        <div className={post.image_url ? "absolute bottom-0 left-0 right-0 p-4 md:p-12" : "container mx-auto px-4"}>
+          <div className={post.image_url ? "container mx-auto" : ""}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -100,7 +115,7 @@ const PostDetail = () => {
 
                  {/* Main Body */}
                  <div 
-                   className="prose prose-lg prose-invert max-w-none prose-headings:font-heading prose-headings:uppercase prose-p:font-body prose-p:text-muted-foreground prose-a:text-primary hover:prose-a:text-primary/80 transition-colors"
+                   className="prose prose-lg max-w-none prose-headings:font-heading prose-headings:uppercase prose-headings:text-black prose-p:font-body prose-p:text-black/80 prose-a:text-[#8e160b] hover:prose-a:text-[#8e160b]/80 transition-colors"
                    dangerouslySetInnerHTML={{ __html: post.body }}
                  />
 
@@ -124,27 +139,51 @@ const PostDetail = () => {
               {/* Sidebar */}
               <aside className="lg:col-span-4 space-y-12">
                  <div className="bg-muted/30 border border-border p-8 rounded-2xl">
-                    <h4 className="font-heading text-lg font-bold uppercase mb-6 flex items-center gap-2">
-                       <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                       Next Match
+                    <h4 className="font-heading text-lg font-bold uppercase mb-6 flex items-center gap-2 text-black">
+                       <div className="w-2 h-2 bg-[#8e160b] rounded-full animate-pulse" />
+                       Next Home Match
                     </h4>
-                    <div className="text-center py-6 bg-club-dark rounded-xl text-white shadow-xl">
-                       <p className="text-[10px] font-heading uppercase tracking-widest text-primary mb-3">Enclosed Ground • Sat</p>
-                       <h5 className="font-heading text-2xl font-bold uppercase px-4 truncate">Whitehawk vs Folkestone</h5>
-                       <Button className="mt-6 font-heading uppercase text-xs h-9 tracking-widest w-4/5 mx-auto">Get Tickets</Button>
-                    </div>
+                    {isFixturesLoading ? (
+                      <div className="text-center py-6 bg-muted/50 rounded-xl text-muted-foreground shadow-sm flex justify-center">
+                         <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                      </div>
+                    ) : nextHomeMatch ? (
+                      <div className="text-center py-6 bg-[#8e160b] rounded-xl text-white shadow-xl">
+                         <p className="text-[10px] font-heading uppercase tracking-widest text-[#facc15] mb-3">{nextHomeMatch.venue || "Enclosed Ground"} • {format(parseISO(nextHomeMatch.date), "EEE d MMM")}</p>
+                         <h5 className="font-heading text-2xl font-bold uppercase px-4 truncate">
+                           {(nextHomeMatch["home-team"]?.name?.toLowerCase() === "whitehawk" ? "HAWKS" : (nextHomeMatch["home-team"]?.name?.split(" ")[0] || "TBD"))}
+                           <span className="text-white/60 mx-2 text-lg">vs</span>
+                           {(nextHomeMatch["away-team"]?.name?.toLowerCase() === "whitehawk" ? "HAWKS" : (nextHomeMatch["away-team"]?.name?.split(" ")[0] || "TBD"))}
+                         </h5>
+                        <a href="https://whitehawkfc.ktckts.com/" target="_blank" rel="noopener noreferrer">
+                          <Button className="mt-6 font-heading uppercase text-xs h-9 tracking-widest w-4/5 mx-auto bg-club-gold text-black hover:bg-club-gold/90 transition-all shadow-lg active:scale-95">
+                            Get Tickets
+                          </Button>
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="text-center py-6 bg-muted/50 rounded-xl text-muted-foreground shadow-sm">
+                         <p className="font-heading uppercase text-sm">No upcoming home matches</p>
+                      </div>
+                    )}
                  </div>
 
-                 <div className="space-y-6">
-                    <h4 className="font-heading text-lg font-bold uppercase border-b border-border pb-3">Official Partners</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                       {[1,2,3,4].map(i => (
-                         <div key={i} className="aspect-video bg-muted/20 rounded-lg border border-border/50 flex items-center justify-center p-4 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer">
-                            <Heart size={20} className="text-muted-foreground" />
-                         </div>
-                       ))}
-                    </div>
-                 </div>
+                 {displaySponsors.length > 0 && (
+                   <div className="space-y-6">
+                      <h4 className="font-heading text-lg font-bold uppercase border-b border-border pb-3">Official Partners</h4>
+                      <div className="grid grid-cols-3 gap-4">
+                         {displaySponsors.map(s => (
+                           <a key={s.id} href={s.website_url || "#"} target="_blank" rel="noreferrer" className="aspect-video bg-muted/20 rounded-lg border border-border/50 flex items-center justify-center p-2 md:p-4 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all">
+                              {s.logo_url ? (
+                                <img src={s.logo_url} alt={s.name} className="max-h-full max-w-full object-contain" />
+                              ) : (
+                                <span className="font-heading text-[8px] uppercase text-center text-muted-foreground">{s.name}</span>
+                              )}
+                           </a>
+                         ))}
+                      </div>
+                   </div>
+                 )}
               </aside>
            </div>
         </div>

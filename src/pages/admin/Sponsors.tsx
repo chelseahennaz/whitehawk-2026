@@ -9,11 +9,15 @@ import {
   Save,
   Link as LinkIcon,
   Globe,
-  Upload,
-  GripVertical
+  GripVertical,
+  Eye,
+  EyeOff
 } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +28,7 @@ import {
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { deleteImageFromIonos } from "@/lib/imageHelpers";
 import { Reorder, useDragControls } from "framer-motion";
 import type { Sponsor } from "@/hooks/useSupabase";
 
@@ -33,7 +38,6 @@ const Sponsors = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingSponsor, setEditingSponsor] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [localSponsors, setLocalSponsors] = useState<Sponsor[]>([]);
 
   useEffect(() => {
@@ -58,6 +62,7 @@ const Sponsors = () => {
         logo_url: s.logo_url,
         tier: s.tier,
         website_url: s.website_url,
+        is_visible: s.is_visible !== false,
         position: index + 1
       }));
 
@@ -74,7 +79,10 @@ const Sponsors = () => {
   };
 
   const handleEdit = (sponsor: any) => {
-    setEditingSponsor(sponsor);
+    setEditingSponsor({
+      ...sponsor,
+      is_visible: sponsor.is_visible !== false
+    });
     setIsEditing(true);
   };
 
@@ -84,51 +92,29 @@ const Sponsors = () => {
       tier: "Classic",
       logo_url: "",
       website_url: "",
+      is_visible: true,
       position: (sponsors?.length || 0) + 1
     });
     setIsEditing(true);
   };
 
   const handleDelete = async (id: string) => {
+    const sponsor = localSponsors.find(s => s.id === id);
     if (!window.confirm("Are you sure you want to remove this sponsor?")) return;
 
     const { error } = await supabase.from("sponsors").delete().eq("id", id);
     if (error) {
       toast.error("Failed to delete sponsor");
     } else {
+      if (sponsor?.logo_url) {
+        await deleteImageFromIonos(sponsor.logo_url);
+      }
       toast.success("Sponsor removed");
       refetch();
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    setUploading(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `logos/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("sponsor-logos")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("sponsor-logos")
-        .getPublicUrl(filePath);
-
-      setEditingSponsor({ ...editingSponsor, logo_url: publicUrl });
-      toast.success("Logo uploaded");
-    } catch (error: any) {
-      toast.error(error.message || "Upload failed");
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -164,6 +150,23 @@ const Sponsors = () => {
     );
   }
 
+  const handleToggleVisibility = async (sponsor: Sponsor) => {
+    try {
+      const nextVisible = sponsor.is_visible === false;
+      const { error } = await supabase
+        .from("sponsors")
+        .update({ is_visible: nextVisible })
+        .eq("id", sponsor.id);
+
+      if (error) throw error;
+      toast.success(`${sponsor.name} is now ${nextVisible ? "visible" : "hidden"}`);
+      refetch();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to update visibility");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -192,6 +195,7 @@ const Sponsors = () => {
               sponsor={sponsor} 
               onEdit={() => handleEdit(sponsor)} 
               onDelete={() => handleDelete(sponsor.id)} 
+              onToggleVisibility={() => handleToggleVisibility(sponsor)}
             />
           </Reorder.Item>
         ))}
@@ -223,26 +227,20 @@ const Sponsors = () => {
                 />
               </div>
               
-              <div className="grid gap-1">
-                 <label className="text-[10px] uppercase tracking-widest font-heading text-muted-foreground mb-1">Logo</label>
-                 <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 rounded-lg bg-muted flex items-center justify-center border border-border overflow-hidden">
-                       {editingSponsor.logo_url ? (
-                         <img src={editingSponsor.logo_url} alt="Logo" className="w-full h-full object-contain" />
-                       ) : (
-                         <ImageIcon size={24} className="text-muted-foreground/30" />
-                       )}
-                    </div>
-                    <label className="flex-1">
-                       <Button variant="outline" className="w-full h-20 flex-col gap-2 font-heading uppercase text-[10px] border-dashed" asChild>
-                          <div>
-                            {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload size={20} />}
-                            {uploading ? "Uploading..." : "Upload Logo"}
-                            <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-                          </div>
-                       </Button>
-                    </label>
-                 </div>
+              <div className="grid gap-2">
+                <ImageUpload 
+                  label="Logo (Saved to IONOS)"
+                  value={editingSponsor.logo_url}
+                  onChange={(url) => setEditingSponsor({...editingSponsor, logo_url: url})}
+                  className="mb-2"
+                />
+                
+                {editingSponsor.logo_url && (
+                  <div className="flex items-center gap-2 text-[9px] text-muted-foreground bg-muted/30 p-2 rounded border border-border/50">
+                    <ImageIcon size={12} />
+                    <span className="truncate max-w-[200px]">{editingSponsor.logo_url}</span>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -268,6 +266,18 @@ const Sponsors = () => {
                   />
                 </div>
               </div>
+
+              <div className="flex items-center justify-between bg-slate-50 border border-slate-200/80 rounded-lg p-3 mt-2">
+                <div className="space-y-0.5">
+                  <Label htmlFor="sponsor-visible" className="text-xs font-heading font-bold uppercase tracking-wider cursor-pointer">Visible on Website</Label>
+                  <p className="text-[10px] text-muted-foreground leading-none font-body">Toggle if this partner shows on public pages.</p>
+                </div>
+                <Switch 
+                  id="sponsor-visible"
+                  checked={editingSponsor.is_visible !== false}
+                  onCheckedChange={(checked) => setEditingSponsor({...editingSponsor, is_visible: checked})}
+                />
+              </div>
             </div>
           )}
 
@@ -289,21 +299,27 @@ const Sponsors = () => {
 const SponsorCard = ({ 
   sponsor, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onToggleVisibility
 }: { 
   sponsor: Sponsor; 
   onEdit: () => void; 
   onDelete: () => void;
+  onToggleVisibility: () => void;
 }) => {
+  const isHidden = sponsor.is_visible === false;
+
   return (
-    <div className="bg-card border border-border rounded-xl p-4 shadow-sm flex items-center gap-4 group cursor-default">
+    <div className={`bg-card border border-border rounded-xl p-4 shadow-sm flex items-center gap-4 group cursor-default transition-all ${
+      isHidden ? "bg-slate-50/50 border-dashed opacity-65" : ""
+    }`}>
       <div className="cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground transition-colors p-1">
         <GripVertical size={20} />
       </div>
 
       <div className="w-20 h-12 flex items-center justify-center bg-muted/20 rounded border border-border/50 shrink-0">
         {sponsor.logo_url ? (
-          <img src={sponsor.logo_url} alt={sponsor.name} className="max-h-10 max-w-full object-contain" />
+          <img src={sponsor.logo_url} alt={sponsor.name} className={`max-h-10 max-w-full object-contain ${isHidden ? "grayscale" : ""}`} />
         ) : (
           <Heart className="text-muted-foreground/10" size={20} />
         )}
@@ -311,14 +327,20 @@ const SponsorCard = ({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <h3 className="font-heading text-sm font-bold uppercase tracking-tight truncate">{sponsor.name}</h3>
+          <h3 className={`font-heading text-sm font-bold uppercase tracking-tight truncate ${isHidden ? "text-slate-400 line-through" : ""}`}>{sponsor.name}</h3>
           <span className={`px-2 py-0.5 rounded text-[8px] font-heading uppercase font-bold tracking-widest shrink-0 ${
+            isHidden ? "bg-slate-200 text-slate-400" :
             sponsor.tier === 'Elite' ? 'bg-club-dark text-primary-foreground' : 
             sponsor.tier === 'Prestige' ? 'club-gradient text-primary-foreground' :
             sponsor.tier === 'Signature' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
           }`}>
             {sponsor.tier}
           </span>
+          {isHidden && (
+            <span className="bg-red-50 text-red-600 border border-red-200 text-[8px] font-heading uppercase px-1.5 py-0.5 rounded tracking-wide">
+              Hidden
+            </span>
+          )}
         </div>
         {sponsor.website_url && (
           <p className="text-[10px] text-muted-foreground truncate opacity-60">
@@ -328,6 +350,15 @@ const SponsorCard = ({
       </div>
 
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pr-2">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={onToggleVisibility} 
+          className={`h-8 w-8 p-0 ${isHidden ? "text-slate-400 hover:text-slate-600" : "text-slate-600 hover:text-primary"}`}
+          title={isHidden ? "Show on website" : "Hide from website"}
+        >
+          {isHidden ? <EyeOff size={14} /> : <Eye size={14} />}
+        </Button>
         <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
           <Edit2 size={14} />
         </Button>

@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { Link } from "react-router-dom";
 
 const News = () => {
-  const { data: articles, isLoading } = usePosts();
+  const { data: articles, isLoading } = usePosts(true);
   const [active, setActive] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -97,9 +97,14 @@ const News = () => {
               >
                 {/* Background Image */}
                 {featured.image_url ? (
-                  <img src={featured.image_url} alt={featured.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-75 group-hover:brightness-90" />
+                  <img 
+                    src={featured.image_url} 
+                    alt={featured.title} 
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-75 group-hover:brightness-90" 
+                    style={{ objectPosition: `center ${featured.image_offset !== undefined && featured.image_offset !== null ? featured.image_offset : 50}%` }}
+                  />
                 ) : (
-                  <div className="absolute inset-0 club-gradient opacity-30" />
+                  <div className="absolute inset-0 bg-[#8e160b]" />
                 )}
 
                 {/* Overlay */}
@@ -149,9 +154,14 @@ const News = () => {
                     >
                       {/* Background Image */}
                       {article.image_url ? (
-                        <img src={article.image_url} alt={article.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100" />
+                        <img 
+                          src={article.image_url} 
+                          alt={article.title} 
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100" 
+                          style={{ objectPosition: `center ${article.image_offset !== undefined && article.image_offset !== null ? article.image_offset : 50}%` }}
+                        />
                       ) : (
-                        <div className="absolute inset-0 club-gradient opacity-30" />
+                        <div className="absolute inset-0 bg-[#8e160b]" />
                       )}
 
                       {/* Overlay */}

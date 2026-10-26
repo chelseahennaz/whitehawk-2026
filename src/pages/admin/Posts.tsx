@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { deleteImageFromIonos } from "@/lib/imageHelpers";
 
 const Posts = () => {
   const { data: posts, isLoading, refetch } = usePosts();
@@ -32,14 +33,28 @@ const Posts = () => {
     post.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, imageUrl: string | null) => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     const { error } = await supabase.from("posts").delete().eq("id", id);
     if (error) {
       toast.error("Failed to delete post");
     } else {
+      if (imageUrl) {
+        await deleteImageFromIonos(imageUrl);
+      }
       toast.success("Post deleted successfully");
+      refetch();
+    }
+  };
+
+  const handleToggleStatus = async (id: string, currentStatus: string = 'published') => {
+    const newStatus = currentStatus === 'draft' ? 'published' : 'draft';
+    const { error } = await supabase.from("posts").update({ status: newStatus }).eq("id", id);
+    if (error) {
+      toast.error("Failed to update post status");
+    } else {
+      toast.success(`Post marked as ${newStatus}`);
       refetch();
     }
   };
@@ -83,8 +98,9 @@ const Posts = () => {
               <tr className="border-b border-border bg-muted/30">
                 <th className="px-6 py-3 font-heading text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Title</th>
                 <th className="px-6 py-3 font-heading text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Category</th>
-                <th className="px-6 py-3 font-heading text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Published</th>
+                <th className="px-6 py-3 font-heading text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Date</th>
                 <th className="px-6 py-3 font-heading text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Status</th>
+                <th className="px-6 py-3 font-heading text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Feature</th>
                 <th className="px-6 py-3 text-right"></th>
               </tr>
             </thead>
@@ -110,6 +126,11 @@ const Posts = () => {
                     {format(new Date(post.published_at), "MMM d, yyyy")}
                   </td>
                   <td className="px-6 py-4">
+                    <span className={post.status === "draft" ? "bg-red-500/10 text-red-600 px-2 py-0.5 rounded text-[10px] font-heading uppercase font-bold" : "bg-green-500/10 text-green-600 px-2 py-0.5 rounded text-[10px] font-heading uppercase font-bold"}>
+                      {post.status === "draft" ? "Draft" : "Published"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
                     <span className={post.featured ? "bg-club-gold/10 text-club-gold px-2 py-0.5 rounded text-[10px] font-heading uppercase font-bold" : "bg-muted text-muted-foreground px-2 py-0.5 rounded text-[10px] font-heading uppercase"}>
                       {post.featured ? "Featured" : "Standard"}
                     </span>
@@ -133,8 +154,14 @@ const Posts = () => {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem 
+                          className="flex items-center gap-2 cursor-pointer"
+                          onClick={() => handleToggleStatus(post.id, post.status || 'published')}
+                        >
+                          <FileText size={14} /> {post.status === "draft" ? "Publish Post" : "Set to Draft"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
                           className="text-red-600 focus:text-red-600 flex items-center gap-2"
-                          onClick={() => handleDelete(post.id)}
+                          onClick={() => handleDelete(post.id, post.image_url)}
                         >
                           <Trash2 size={14} /> Delete
                         </DropdownMenuItem>

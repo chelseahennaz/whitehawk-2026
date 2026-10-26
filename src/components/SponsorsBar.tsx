@@ -33,7 +33,7 @@ const SponsorRow = ({
                 <img 
                   src={s.logo_url} 
                   alt={s.name} 
-                  className="max-h-full max-w-full object-contain grayscale opacity-60 brightness-95 group-hover:grayscale-0 group-hover:opacity-100 group-hover:brightness-100 transition-all duration-500 ease-in-out" 
+                  className="max-h-full max-w-full object-contain opacity-90 hover:opacity-100 transition-all duration-500 ease-in-out" 
                 />
               ) : (
                 <span className="font-heading text-[10px] uppercase tracking-widest text-muted-foreground/30">{s.name}</span>
@@ -59,8 +59,17 @@ const SponsorsBar = () => {
 
   if (!sponsors || sponsors.length === 0) return null;
 
-  const elite = sponsors.filter(s => s.tier === 'Elite');
-  const otherTiers = sponsors.filter(s => s.tier !== 'Elite');
+  const visibleSponsors = sponsors.filter(s => s.is_visible !== false);
+  if (visibleSponsors.length === 0) return null;
+
+  const elite = visibleSponsors.filter(s => s.tier === 'Elite');
+  const otherTiers = visibleSponsors.filter(s => s.tier !== 'Elite');
+
+  const chunkArray = <T,>(arr: T[], size: number): T[][] => {
+    return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+      arr.slice(i * size, i * size + size)
+    );
+  };
 
   return (
     <section className="bg-white border-t border-[#eee]">
@@ -68,29 +77,34 @@ const SponsorsBar = () => {
         
         {/* Elite Sponsors Section */}
         {elite.length > 0 && (
-          <div className="py-16 md:py-20 border-b border-[#f0f0f0]">
-             <div className="flex items-center justify-center gap-x-10 gap-y-8 flex-wrap">
-                {elite.map((s) => (
-                  <motion.a
-                    key={s.id}
-                    href={s.website_url || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="h-12 md:h-20 w-auto flex items-center justify-center px-4 transition-all duration-500 group"
-                  >
-                    {s.logo_url ? (
-                      <img 
-                        src={s.logo_url} 
-                        alt={s.name} 
-                        className="max-h-full max-w-full object-contain grayscale opacity-60 min-w-[110px] md:min-w-[170px] group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
-                      />
-                    ) : (
-                      <span className="font-heading text-lg uppercase tracking-widest text-[#141b2b]/30">{s.name}</span>
-                    )}
-                  </motion.a>
+          <div className="py-10 md:py-12 border-b border-[#f0f0f0]">
+             <div className="flex flex-col items-center" style={{ gap: '40px' }}>
+                {chunkArray(elite, 5).map((row, rowIndex) => (
+                  <div key={rowIndex} className="flex items-center justify-center flex-wrap" style={{ gap: '33px' }}>
+                    {row.map((s) => (
+                      <motion.a
+                        key={s.id}
+                        href={s.website_url || "#"}
+                        target="_blank"
+                        rel="noreferrer"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="flex items-center justify-center transition-all duration-500 group"
+                        style={{ height: '75px' }}
+                      >
+                        {s.logo_url ? (
+                          <img 
+                            src={s.logo_url} 
+                            alt={s.name} 
+                            className="max-h-full max-w-full object-contain min-w-[110px] md:min-w-[170px] opacity-90 hover:opacity-100 transition-all duration-500" 
+                          />
+                        ) : (
+                          <span className="font-heading text-lg uppercase tracking-widest text-[#141b2b]/30">{s.name}</span>
+                        )}
+                      </motion.a>
+                    ))}
+                  </div>
                 ))}
              </div>
           </div>
@@ -99,28 +113,33 @@ const SponsorsBar = () => {
         {/* Other Partners Section (Combined prestige/signature/classic) */}
         {otherTiers.length > 0 && (
           <div className="py-12 md:py-16 border-b border-[#f0f0f0]">
-            <div className="flex items-center justify-center gap-x-8 gap-y-6 flex-wrap">
-              {otherTiers.map((s) => (
-                <motion.a
-                  key={s.id}
-                  href={s.website_url || "#"}
-                  target="_blank"
-                  rel="noreferrer"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  className="h-8 md:h-10 w-auto flex items-center justify-center px-4 transition-all duration-500 group"
-                >
-                  {s.logo_url ? (
-                    <img 
-                      src={s.logo_url} 
-                      alt={s.name} 
-                      className="max-h-full max-w-full object-contain grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
-                    />
-                  ) : (
-                    <span className="font-heading text-xs uppercase tracking-widest text-[#141b2b]/20">{s.name}</span>
-                  )}
-                </motion.a>
+            <div className="flex flex-col items-center" style={{ gap: '40px' }}>
+              {chunkArray(otherTiers, 5).map((row, rowIndex) => (
+                <div key={rowIndex} className="flex items-center justify-center flex-wrap" style={{ gap: '33px' }}>
+                  {row.map((s) => (
+                    <motion.a
+                      key={s.id}
+                      href={s.website_url || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      className="flex items-center justify-center transition-all duration-500 group"
+                      style={{ height: '53px' }}
+                    >
+                      {s.logo_url ? (
+                        <img 
+                          src={s.logo_url} 
+                          alt={s.name} 
+                          className="max-h-full max-w-full object-contain opacity-80 hover:opacity-100 transition-all duration-500" 
+                        />
+                      ) : (
+                        <span className="font-heading text-xs uppercase tracking-widest text-[#141b2b]/20">{s.name}</span>
+                      )}
+                    </motion.a>
+                  ))}
+                </div>
               ))}
             </div>
           </div>

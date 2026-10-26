@@ -18,8 +18,9 @@ export interface TeamMatchCentre {
 }
 
 const youthLeagueHub = "https://fulltime.thefa.com/index.html?divisionseason=972783774";
-const womenTeamPage = "https://fulltime.thefa.com/displayTeam.html?divisionseason=87609080&teamID=854369197";
-const womenLeaguePage = "https://fulltime.thefa.com/index.html?divisionseason=87609080";
+const womenFixturesPage = "http://fulltime.thefa.com/fixtures.html?selectedSeason=44984867&selectedFixtureGroupAgeGroup=0&selectedFixtureGroupKey=1_717953301&selectedDateCode=all&selectedClub=215233936&selectedTeam=854369197&selectedRelatedFixtureOption=3&selectedFixtureDateStatus=&selectedFixtureStatus=&previousSelectedFixtureGroupAgeGroup=&previousSelectedFixtureGroupKey=1_717953301&previousSelectedClub=215233936&itemsPerPage=25";
+const womenTablePage = "https://fulltime.thefa.com/table.html?league=5559379&selectedSeason=44984867&selectedDivision=36318434&selectedCompetition=0&selectedFixtureGroupKey=1_717953301";
+const womenResultsPage = "https://fulltime.thefa.com/results.html?league=5559379&selectedSeason=44984867&selectedDivision=36318434&selectedCompetition=0&selectedFixtureGroupKey=1_717953301";
 const u18TeamPage = "https://fulltime.thefa.com/displayTeam.html?id=264393933";
 const u18LeaguePage = "https://fulltime.thefa.com/index.html?divisionseason=416411432";
 const u9TeamPage = "https://fulltime.thefa.com/displayTeam.html?divisionseason=31846022&teamID=15372412";
@@ -45,22 +46,22 @@ export const featuredMatchCentres: TeamMatchCentre[] = [
       "The official Whitehawk Women page currently marks the squad section as coming soon. I’ve left this as an intentional placeholder until the club publishes the player list.",
     resources: {
       fixtures: {
-        href: womenTeamPage,
+        href: womenFixturesPage,
         label: "Upcoming fixtures",
         status: "live",
-        note: "Open the FA Full-Time team page to see the latest scheduled matches for Whitehawk Women.",
+        note: "Open the FA Full-Time fixtures page to see the latest scheduled matches for Whitehawk Women.",
       },
       results: {
-        href: womenTeamPage,
+        href: womenResultsPage,
         label: "Latest results",
         status: "live",
-        note: "Use the same FA Full-Time team page for completed match results and form updates.",
+        note: "Use the FA Full-Time results page for completed match results and form updates.",
       },
       table: {
-        href: womenLeaguePage,
+        href: womenTablePage,
         label: "League table",
         status: "live",
-        note: "View the current Open Age Championship standings on the league page used by the club site.",
+        note: "View the current Open Age Championship standings on the FA Full-Time table page.",
       },
     },
   },

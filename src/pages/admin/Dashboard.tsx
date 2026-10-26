@@ -69,7 +69,7 @@ const Dashboard = () => {
                 <div>
                   <p className="text-sm font-medium line-clamp-1">{post.title}</p>
                   <p className="text-[10px] text-muted-foreground uppercase mt-0.5">
-                    {format(new Date(post.published_at), "MMM d, yyyy")} • {post.category}
+                    {format(new Date(post.published_at), "MMM d, yyyy")} • {post.category} • {post.status === "draft" ? "Draft" : "Published"}
                   </p>
                 </div>
                 <Link to={`/admin/posts/edit/${post.id}`}>
@@ -119,6 +119,10 @@ const Dashboard = () => {
                  <Link to="/admin/settings" className="p-3 bg-muted/50 rounded-lg text-center hover:bg-muted transition-colors">
                     <SettingsIcon size={20} className="mx-auto mb-2 text-primary" />
                     <span className="text-[10px] font-heading uppercase">Hero Settings</span>
+                 </Link>
+                 <Link to="/admin/users" className="p-3 bg-muted/50 rounded-lg text-center hover:bg-muted transition-colors">
+                    <Users size={20} className="mx-auto mb-2 text-primary" />
+                    <span className="text-[10px] font-heading uppercase">Admin Users</span>
                  </Link>
               </div>
            </div>

@@ -25,12 +25,13 @@ const DiscoverSection = () => {
                 About The Club
               </h3>
               <p className="text-[#555] text-sm font-body mb-5 max-w-md leading-relaxed">
-                The club sits within the heart of East Brighton, a community club since 1945. Football brings everyone together — we look forward to seeing you at the TerraPura Ground!
+                The club sits within the heart of East Brighton, a community club since 1945. Football brings everyone together — we look forward to seeing you at the Enclosed Ground!
               </p>
               <div className="text-[#777] text-sm font-heading tracking-widest space-y-1.5">
-                <p><span className="text-[#333]">Adults</span> – £10</p>
-                <p><span className="text-[#333]">Concessions</span> – £6</p>
-                <p><span className="text-[#333]">Under 16s</span> – FREE</p>
+                <p><span className="text-[#333]">Adults</span> – £13</p>
+                <p><span className="text-[#333]">Concessions</span> – £8</p>
+                <p><span className="text-[#333]">Under 18s</span> – £5</p>
+                <p><span className="text-[#333]">Under 11s</span> – FREE</p>
               </div>
             </div>
             <div className="mt-8 pt-6 border-t border-[#e5e5e5] flex justify-end">

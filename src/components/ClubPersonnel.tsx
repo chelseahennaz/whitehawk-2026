@@ -91,9 +91,9 @@ const ClubPersonnel = () => {
               </div>
               <div className="divide-y divide-border">
                 {dept.members.map((member) => (
-                  <div key={member.name} className="px-5 py-3 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center shrink-0">
-                      <span className="font-heading text-[10px] font-bold text-muted-foreground">
+                  <div key={member.name} className="px-5 py-3.5 flex items-center gap-4">
+                    <div className="w-[13px] h-[13px] rounded-full bg-muted flex items-center justify-center shrink-0">
+                      <span className="font-heading text-[5px] font-bold text-muted-foreground">
                         {member.name
                           .split(" ")
                           .map((n) => n[0])

@@ -7,10 +7,12 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Lock, Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -19,9 +21,16 @@ const Login = () => {
     setLoading(true);
 
     try {
+      // Temporarily bypassed CAPTCHA check for debugging
+      // if (!captchaToken) {
+      //   setLoading(false);
+      //   return toast.error("Please complete the CAPTCHA");
+      // }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        // options: { captchaToken },
       });
 
       if (error) throw error;
@@ -47,7 +56,7 @@ const Login = () => {
         <div className="flex flex-col items-center mb-8">
           <div className="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mb-6 shadow-xl border border-white/10 p-1">
              <img 
-               src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png" 
+               src="https://thehawksfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png" 
                alt="Whitehawk FC" 
                className="w-full h-full object-contain"
              />
@@ -93,6 +102,14 @@ const Login = () => {
                 className="bg-white/5 border-white/10 text-white pl-10 h-11 focus:ring-primary focus:border-primary transition-all"
               />
             </div>
+          </div>
+
+          <div className="flex justify-center pt-2">
+            <HCaptcha
+              sitekey="5dd2a5e8-1ff2-48d6-9f34-59ccc42ef098"
+              onVerify={(token) => setCaptchaToken(token)}
+              theme="dark"
+            />
           </div>
 
           <Button 

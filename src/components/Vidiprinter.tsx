@@ -14,19 +14,18 @@ const Vidiprinter = ({ events, isLive = false }: VidiprinterProps) => {
   useEffect(() => {
     if (events.length === 0) return;
 
-    const currentEvent = events[currentIndex];
+    const currentEvent = events[currentIndex].trim();
     let i = 0;
     setIsTyping(true);
     setDisplayText("");
 
-    const typingInterval = setInterval(() => {
+    const typeChar = () => {
       if (i < currentEvent.length) {
-        setDisplayText((prev) => prev + currentEvent.charAt(i));
+        setDisplayText(currentEvent.substring(0, i + 1));
         i++;
+        setTimeout(typeChar, 40);
       } else {
-        clearInterval(typingInterval);
         setIsTyping(false);
-        
         // Wait and then move to next event if multiple exist
         if (events.length > 1) {
           setTimeout(() => {
@@ -34,9 +33,12 @@ const Vidiprinter = ({ events, isLive = false }: VidiprinterProps) => {
           }, 5000);
         }
       }
-    }, 50); // Speed of "typing"
+    };
 
-    return () => clearInterval(typingInterval);
+    // Kick off typing
+    const startDelay = setTimeout(typeChar, 100);
+
+    return () => clearTimeout(startDelay);
   }, [currentIndex, events]);
 
   if (events.length === 0) return null;

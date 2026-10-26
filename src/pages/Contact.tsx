@@ -7,12 +7,12 @@ const contacts = [
     title: "General Enquiries",
     icon: Mail,
     description: "For any general questions about the club, matchdays, or events.",
-    email: "info@whitehawkfc.com",
+    email: "club@whitehawkfc.com",
   },
   {
     title: "Commercial & Sponsorship",
     icon: Handshake,
-    description: "Interested in sponsoring the Hawks or advertising at the TerraPura Ground?",
+    description: "Interested in sponsoring the Hawks or advertising at the The Enclosed Ground?",
     email: "commercial@whitehawkfc.com",
   },
   {
@@ -39,17 +39,18 @@ const Contact = () => {
   return (
     <>
       {/* Hero */}
-      <section className="bg-club-dark py-16 md:py-24">
+      <section className="bg-white border-b border-border/50 pt-20 pb-12 md:pt-28 md:pb-16">
         <div className="container mx-auto px-4">
-          <p className="mb-2 font-heading text-sm uppercase tracking-widest text-club-gold">
+          <p className="mb-2 font-heading text-sm uppercase tracking-[0.3em] font-bold text-[#8e160b]">
             Get In Touch
           </p>
-          <h1 className="font-heading text-4xl font-bold uppercase leading-none text-primary-foreground md:text-6xl">
+          <h1 className="font-heading text-5xl font-bold uppercase leading-tight text-black md:text-8xl tracking-tighter">
             Contact Us
           </h1>
-          <p className="mt-4 max-w-2xl font-body text-base text-primary-foreground/70">
+          <p className="mt-6 max-w-3xl font-body text-lg text-muted-foreground leading-relaxed">
             Whether you&apos;re a supporter, sponsor, journalist or just want to find out more about the Hawks, we&apos;d love to hear from you.
           </p>
+          <div className="h-2 w-24 bg-club-gold mt-10" />
         </div>
       </section>
 
@@ -65,8 +66,8 @@ const Contact = () => {
               className="overflow-hidden rounded-2xl border border-border shadow-sm"
             >
               <iframe
-                title="TerraPura Ground Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2521.6!2d-0.1098!3d50.8372!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48758590c4b0b3c5%3A0x3d52cbb6e0e0b0a0!2sThe%20Enclosed%20Ground%2C%20Wilson%20Ave%2C%20Brighton%20BN2%205TS!5e0!3m2!1sen!2suk!4v1700000000000"
+                title="The Enclosed Ground Location"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1260.10923!2d-0.0973596!3d50.8209484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487585dd66464d95%3A0x23a7938ca910df32!2sWhitehawk%20FC!5e0!3m2!1sen!2suk!4v1721122500000!5m2!1sen!2suk"
                 width="100%"
                 height="100%"
                 style={{ border: 0, minHeight: 400 }}
@@ -87,10 +88,10 @@ const Contact = () => {
                 Our Home
               </p>
               <h2 className="font-heading text-3xl font-bold uppercase text-foreground md:text-4xl">
-                The TerraPura Ground
+                The Enclosed Ground
               </h2>
               <p className="mt-4 font-body text-sm leading-relaxed text-muted-foreground">
-                Home of Whitehawk FC since the club&apos;s founding, the TerraPura Ground sits in East Brighton Park and has been the heart of Hawks football for generations. The ground is accessible by bus and has limited parking nearby.
+                Home of Whitehawk FC since the club&apos;s founding, the Enclosed Ground sits in East Brighton Park and has been the heart of Hawks football for generations. The ground is accessible by bus and has limited parking nearby.
               </p>
 
               <div className="mt-8 space-y-5">
@@ -101,7 +102,7 @@ const Contact = () => {
                   <div>
                     <p className="font-heading text-sm font-semibold uppercase tracking-wide text-foreground">Address</p>
                     <p className="font-body text-sm text-muted-foreground">
-                      The TerraPura Ground<br />
+                      The Enclosed Ground<br />
                       East Brighton Park, Wilson Avenue<br />
                       Brighton BN2 5TS
                     </p>
@@ -134,7 +135,7 @@ const Contact = () => {
                 </div>
 
                 <a
-                  href="https://maps.google.com/?q=TerraPura+Ground+Wilson+Avenue+Brighton+BN2+5TS"
+                  href="https://maps.google.com/?q=The+Enclosed+Ground+Wilson+Avenue+Brighton+BN2+5TS"
                   target="_blank"
                   rel="noreferrer noopener"
                   className="inline-flex items-center gap-2 rounded-full border border-primary bg-primary/5 px-5 py-2.5 font-heading text-xs uppercase tracking-wider text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
@@ -148,7 +149,7 @@ const Contact = () => {
       </section>
 
       {/* Contact Cards */}
-      <section className="border-t border-border bg-muted/30 py-12 md:py-20">
+      <section className="border-t border-border bg-white py-12 md:py-20 text-center">
         <div className="container mx-auto px-4">
           <div className="mb-10 max-w-2xl">
             <p className="mb-2 font-heading text-xs uppercase tracking-[0.3em] text-primary">

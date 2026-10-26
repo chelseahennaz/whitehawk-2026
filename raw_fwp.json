@@ -1,0 +1,1085 @@
+{"fixtures-results": {
+"matches": [
+{
+"attendance": 0,
+"away-team": {
+"half-time-score": 1,
+"id": 468,
+"name": "Whitehawk",
+"score": 1
+},
+"competition": {
+"id": 31,
+"name": "Friendly"
+},
+"date": "2026-07-18",
+"home-team": {
+"half-time-score": 0,
+"id": 1931,
+"name": "Broadbridge Heath",
+"score": 1
+},
+"id": 577685,
+"status": {
+"full": "Full Time",
+"short": "FT"
+},
+"time": "13:30",
+"venue": "High Wood Hill Sports Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-08-08",
+"home-team": {
+"id": 156,
+"name": "Welling United",
+"score": 0
+},
+"id": 579410,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Park View Road"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 148,
+"name": "Lewes",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-08-11",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 579431,
+"status": {
+"full": "Kick off 7.45pm",
+"short": "7.45pm"
+},
+"time": "19:45",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-08-15",
+"home-team": {
+"id": 182,
+"name": "Aveley",
+"score": 0
+},
+"id": 579433,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Parkside"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 188,
+"name": "Chatham Town",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-08-22",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 579509,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-08-29",
+"home-team": {
+"id": 375,
+"name": "Enfield Town",
+"score": 0
+},
+"id": 579542,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Dave Bryant Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 252,
+"name": "Burgess Hill Town",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-08-31",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 579555,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-09-12",
+"home-team": {
+"id": 196,
+"name": "Maldon & Tiptree",
+"score": 0
+},
+"id": 579631,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Drewitt-Barlow Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 801,
+"name": "Three Bridges",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-09-15",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 579677,
+"status": {
+"full": "Kick off 7.45pm",
+"short": "7.45pm"
+},
+"time": "19:45",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-09-19",
+"home-team": {
+"id": 189,
+"name": "Dartford",
+"score": 0
+},
+"id": 579691,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Princes Park Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 258,
+"name": "Dulwich Hamlet",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-10-03",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 579807,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-10-07",
+"home-team": {
+"id": 3107,
+"name": "AFC Whyteleafe",
+"score": 0
+},
+"id": 579882,
+"status": {
+"full": "Kick off 7.45pm",
+"short": "7.45pm"
+},
+"time": "19:45",
+"venue": "Flamingo Park"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 380,
+"name": "Ramsgate",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-10-10",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 579895,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-10-17",
+"home-team": {
+"id": 228,
+"name": "Cheshunt",
+"score": 0
+},
+"id": 579932,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Cheshunt Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-10-20",
+"home-team": {
+"id": 148,
+"name": "Lewes",
+"score": 0
+},
+"id": 579977,
+"status": {
+"full": "Kick off 7.45pm",
+"short": "7.45pm"
+},
+"time": "19:45",
+"venue": "The Dripping Pan"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 156,
+"name": "Welling United",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-10-24",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580027,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 153,
+"name": "St Albans City",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-10-31",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580071,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-11-07",
+"home-team": {
+"id": 896,
+"name": "Stanway Rovers",
+"score": 0
+},
+"id": 580113,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Kingdom Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 201,
+"name": "Wingate & Finchley",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-11-14",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580159,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-11-21",
+"home-team": {
+"id": 254,
+"name": "Cray Wanderers",
+"score": 0
+},
+"id": 580195,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Flamingo Park"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-11-28",
+"home-team": {
+"id": 560,
+"name": "Brentwood Town",
+"score": 0
+},
+"id": 580238,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Brentwood Centre Arena"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 262,
+"name": "Leatherhead",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-12-05",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580290,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 375,
+"name": "Enfield Town",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-12-12",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580334,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-12-19",
+"home-team": {
+"id": 141,
+"name": "Carshalton Athletic",
+"score": 0
+},
+"id": 580372,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "War Memorial Sports Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 143,
+"name": "Eastbourne Borough",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2026-12-28",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580422,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-01-02",
+"home-team": {
+"id": 252,
+"name": "Burgess Hill Town",
+"score": 0
+},
+"id": 580459,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Medical Travel Compared Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-01-09",
+"home-team": {
+"id": 153,
+"name": "St Albans City",
+"score": 0
+},
+"id": 580508,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Clarence Park Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 896,
+"name": "Stanway Rovers",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-01-16",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580555,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-01-23",
+"home-team": {
+"id": 201,
+"name": "Wingate & Finchley",
+"score": 0
+},
+"id": 580599,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Maurice Rebak Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 254,
+"name": "Cray Wanderers",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-01-30",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580643,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-02-06",
+"home-team": {
+"id": 801,
+"name": "Three Bridges",
+"score": 0
+},
+"id": 580686,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Jubilee Field"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 3107,
+"name": "AFC Whyteleafe",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-02-09",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580731,
+"status": {
+"full": "Kick off 7.45pm",
+"short": "7.45pm"
+},
+"time": "19:45",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 189,
+"name": "Dartford",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-02-13",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580775,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-02-20",
+"home-team": {
+"id": 258,
+"name": "Dulwich Hamlet",
+"score": 0
+},
+"id": 580814,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Champion Hill"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 560,
+"name": "Brentwood Town",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-02-27",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580862,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-03-06",
+"home-team": {
+"id": 262,
+"name": "Leatherhead",
+"score": 0
+},
+"id": 580904,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Fetcham Grove"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 196,
+"name": "Maldon & Tiptree",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-03-13",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 580950,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-03-20",
+"home-team": {
+"id": 188,
+"name": "Chatham Town",
+"score": 0
+},
+"id": 580989,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Bauvill Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 141,
+"name": "Carshalton Athletic",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-03-27",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 581038,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-03-29",
+"home-team": {
+"id": 143,
+"name": "Eastbourne Borough",
+"score": 0
+},
+"id": 581079,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Priory Lane"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 182,
+"name": "Aveley",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-04-03",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 581126,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-04-10",
+"home-team": {
+"id": 380,
+"name": "Ramsgate",
+"score": 0
+},
+"id": 581167,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "Southwood Stadium"
+},
+{
+"attendance": 0,
+"away-team": {
+"id": 228,
+"name": "Cheshunt",
+"score": 0
+},
+"competition": {
+"id": 11,
+"name": "Isthmian League - Premier Division"
+},
+"date": "2027-04-17",
+"home-team": {
+"id": 468,
+"name": "Whitehawk",
+"score": 0
+},
+"id": 581215,
+"status": {
+"full": "Kick off 3pm",
+"short": "3pm"
+},
+"time": "15:00",
+"venue": "The Enclosed Ground"
+}
+],
+"team": {
+"id": 468,
+"name": "Whitehawk"
+}
+}}

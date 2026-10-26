@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const LatestNews = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { data: newsItems, isLoading } = usePosts();
+  const { data: newsItems, isLoading } = usePosts(true);
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -80,11 +80,10 @@ const LatestNews = () => {
                           src={item.image_url} 
                           alt={item.title} 
                           className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110 brightness-90 group-hover/card:brightness-100" 
+                          style={{ objectPosition: `center ${item.image_offset !== undefined && item.image_offset !== null ? item.image_offset : 50}%` }}
                         />
                       ) : (
-                        <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                           <Loader2 className="w-6 h-6 animate-spin text-white/20" />
-                        </div>
+                        <div className="w-full h-full bg-[#8e160b]" />
                       )}
                       <div className="absolute inset-0 bg-black/20 group-hover/card:bg-black/0 transition-colors duration-500" />
                     </div>

@@ -28,9 +28,12 @@ const footerColumns = [
   {
     heading: "Legal",
     links: [
+      { label: "Terms & Conditions", path: "/terms" },
+      { label: "Refund & Return Policy", path: "/refund-policy" },
+      { label: "Delivery Terms", path: "/delivery-terms" },
       { label: "Privacy Policy", path: "/privacy-policy" },
       { label: "Cookie Policy", path: "/cookie-policy" },
-      { label: "Terms of Use", path: "/terms" },
+      { label: "Safeguarding", path: "/safeguarding" },
     ],
   },
 ];
@@ -112,13 +115,23 @@ const ClubFooter = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/8">
-        <div className="container mx-auto px-6 max-w-6xl py-5 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-white/25 text-xs font-body">
-            © {new Date().getFullYear()} Whitehawk Football Club. All rights reserved.
-          </p>
-          <p className="text-white/20 text-xs font-body">
-            TerraPura Ground, East Brighton Park, Brighton, BN2 5TS
-          </p>
+        <div className="container mx-auto px-6 max-w-6xl py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-white/25 text-xs font-body">
+              © {new Date().getFullYear()} Whitehawk Football Club. All rights reserved.
+            </p>
+            <p className="text-white/20 text-[11px] font-body leading-normal max-w-xl">
+              WHITEHAWK FOOTBALL CLUB LIMITED (Company No: 14984206).
+            </p>
+          </div>
+          <div className="text-left md:text-right space-y-1 self-start md:self-center">
+            <p className="text-white/25 text-[11px] font-body">
+              Designed & Built by Henry Summers
+            </p>
+            <p className="text-white/20 text-xs font-body">
+              The Enclosed Ground, East Brighton Park, Brighton, BN2 5TS
+            </p>
+          </div>
         </div>
       </div>
     </footer>

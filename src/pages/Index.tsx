@@ -2,12 +2,14 @@ import ClubNavigation from "@/components/ClubNavigation";
 import FixturesTicker from "@/components/FixturesTicker";
 import HeroSection from "@/components/HeroSection";
 import FixturesWidget from "@/components/FixturesWidget";
+import LeagueTableWidget from "@/components/LeagueTableWidget";
 import LatestNews from "@/components/LatestNews";
 import VideosSection from "@/components/VideosSection";
 import DiscoverSection from "@/components/DiscoverSection";
 import SponsorsBar from "@/components/SponsorsBar";
 import ClubFooter from "@/components/ClubFooter";
 import { motion } from "framer-motion";
+import { useSettings } from "@/hooks/useSupabase";
 
 // Reusable scroll-reveal wrapper
 const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
@@ -22,14 +24,27 @@ const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode; dela
 );
 
 const Index = () => {
+  const { data: layoutSettings } = useSettings("homepage_layout");
+  const layout = Array.isArray(layoutSettings?.value) ? layoutSettings.value : ["fixtures", "news", "table", "videos", "discover", "sponsors"];
+
+  const renderSection = (id: string, index: number) => {
+    switch (id) {
+      case "fixtures": return <ScrollReveal key={id} delay={index * 0.1}><FixturesWidget /></ScrollReveal>;
+      case "news": return <ScrollReveal key={id} delay={index * 0.1}><LatestNews /></ScrollReveal>;
+      case "table": return <ScrollReveal key={id} delay={index * 0.1}><LeagueTableWidget /></ScrollReveal>;
+      case "videos": return <ScrollReveal key={id} delay={index * 0.1}><VideosSection /></ScrollReveal>;
+      case "discover": return <ScrollReveal key={id} delay={index * 0.1}><DiscoverSection /></ScrollReveal>;
+      case "sponsors": return <ScrollReveal key={id} delay={index * 0.1}><SponsorsBar /></ScrollReveal>;
+      default: return null;
+    }
+  };
+
   return (
     <>
       <HeroSection />
-      <ScrollReveal><LatestNews /></ScrollReveal>
-      <ScrollReveal><FixturesWidget /></ScrollReveal>
-      <ScrollReveal><VideosSection /></ScrollReveal>
-      <ScrollReveal><DiscoverSection /></ScrollReveal>
-      <ScrollReveal><SponsorsBar /></ScrollReveal>
+      <div className="flex flex-col">
+        {layout.map((sectionId: string, i: number) => renderSection(sectionId, i))}
+      </div>
     </>
   );
 };

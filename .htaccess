@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Pass Authorization header to PHP
+  SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+  # Serve static files directly
+  RewriteRule ^index\.html$ - [L]
+
+  # Route /news/* requests to og-meta.php for social media crawler OG tags
+  # This serves dynamic meta tags so Twitter/Facebook show the post's featured image
+  RewriteCond %{REQUEST_URI} ^/news/[a-zA-Z0-9\-_]+$
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^news/(.+)$ /og-meta.php [L,QSA]
+
+  # Standard SPA fallback for all other routes
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+  RewriteRule . /index.html [L]
+</IfModule>

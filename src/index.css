@@ -122,3 +122,14 @@
     text-shadow: 0 4px 20px rgba(0,0,0,0.6);
   }
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+  .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+  }
+}
+

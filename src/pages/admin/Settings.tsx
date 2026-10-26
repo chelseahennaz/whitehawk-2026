@@ -9,7 +9,10 @@ import {
   Megaphone,
   Settings as SettingsIcon,
   CheckCircle2,
-  Share2
+  Share2,
+  Smartphone,
+  Monitor,
+  GripVertical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,27 +20,127 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable
+} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+
+const SECTION_LABELS: Record<string, string> = {
+  "fixtures": "Results & Fixtures",
+  "news": "Latest News",
+  "table": "League Table",
+  "videos": "Videos Section",
+  "discover": "Discover Section",
+  "sponsors": "Sponsors Bar"
+};
+
+const SortableSectionRow = ({ id, label }: { id: string, label: string }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 0,
+    position: 'relative' as any,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`flex items-center gap-3 p-3 bg-white border border-border rounded-lg mb-2 ${isDragging ? 'shadow-md ring-2 ring-primary/20' : ''}`}
+    >
+      <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded text-muted-foreground transition-colors">
+        <GripVertical size={18} />
+      </div>
+      <span className="font-heading uppercase tracking-widest text-sm">{label}</span>
+    </div>
+  );
+};
 import { supabase } from "@/lib/supabase";
 import { useSettings } from "@/hooks/useSupabase";
 import { toast } from "sonner";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+
+interface HeroDeviceSettings {
+  background_type: "image" | "color";
+  background_color: string;
+  custom_image_url: string;
+  image_position: number;
+  hero_size: "compact" | "standard" | "large" | "fullscreen";
+}
 
 const Settings = () => {
   const { data: heroSettings, isLoading: isHeroLoading, refetch: refetchHero } = useSettings("homepage_hero");
   const { data: tickerSettings, isLoading: isTickerLoading, refetch: refetchTicker } = useSettings("fixtures_ticker");
   const { data: brandSettings, isLoading: isBrandLoading, refetch: refetchBrand } = useSettings("club_brand");
   const { data: socialsSettings, isLoading: isSocialsLoading, refetch: refetchSocials } = useSettings("club_socials");
+  const { data: shopSettings, isLoading: isShopLoading, refetch: refetchShop } = useSettings("shop_settings");
+  const { data: layoutSettings, isLoading: isLayoutLoading, refetch: refetchLayout } = useSettings("homepage_layout");
+  
+  const defaultLayout = ["fixtures", "news", "table", "videos", "discover", "sponsors"];
+  const [layoutOrder, setLayoutOrder] = useState<string[]>(defaultLayout);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEndLayout = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setLayoutOrder((items) => {
+      const oldIndex = items.indexOf(active.id as string);
+      const newIndex = items.indexOf(over.id as string);
+      return arrayMove(items, oldIndex, newIndex);
+    });
+  };
   
   const [mode, setMode] = useState<string>("match");
-  const [customImageUrl, setCustomImageUrl] = useState<string>("");
-  const [bgType, setBgType] = useState<"image" | "color">("image");
-  const [bgColor, setBgColor] = useState<string>("#8e160b");
-  const [imagePosition, setImagePosition] = useState<number>(50);
-  const [heroSize, setHeroSize] = useState<"compact" | "standard" | "large" | "fullscreen">("standard");
+  
+  const [mobileHero, setMobileHero] = useState<HeroDeviceSettings>({
+    background_type: "image",
+    background_color: "#8e160b",
+    custom_image_url: "",
+    image_position: 50,
+    hero_size: "compact"
+  });
+
+  const [desktopHero, setDesktopHero] = useState<HeroDeviceSettings>({
+    background_type: "image",
+    background_color: "#8e160b",
+    custom_image_url: "",
+    image_position: 50,
+    hero_size: "standard"
+  });
+
   const [logoUrl, setLogoUrl] = useState<string>("");
   const [tickerEnabled, setTickerEnabled] = useState<boolean>(true);
+  const [shopComingSoon, setShopComingSoon] = useState<boolean>(false);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [socials, setSocials] = useState({
     facebook: "",
     instagram: "",
@@ -50,11 +153,26 @@ const Settings = () => {
   useEffect(() => {
     if (heroSettings?.value) {
       setMode(heroSettings.value.mode || "match");
-      setCustomImageUrl(heroSettings.value.custom_image_url || "");
-      setBgType(heroSettings.value.background_type || "image");
-      setBgColor(heroSettings.value.background_color || "#8e160b");
-      setImagePosition(heroSettings.value.image_position !== undefined ? heroSettings.value.image_position : 50);
-      setHeroSize(heroSettings.value.hero_size || "standard");
+      
+      const migrate = (source: any): HeroDeviceSettings => ({
+        background_type: source.background_type || "image",
+        background_color: source.background_color || "#8e160b",
+        custom_image_url: source.custom_image_url || "",
+        image_position: source.image_position !== undefined ? source.image_position : 50,
+        hero_size: source.hero_size || "standard"
+      });
+
+      if (heroSettings.value.mobile) {
+        setMobileHero(migrate(heroSettings.value.mobile));
+      } else {
+        setMobileHero(migrate(heroSettings.value));
+      }
+
+      if (heroSettings.value.desktop) {
+        setDesktopHero(migrate(heroSettings.value.desktop));
+      } else {
+        setDesktopHero(migrate(heroSettings.value));
+      }
     }
   }, [heroSettings]);
 
@@ -63,6 +181,12 @@ const Settings = () => {
       setTickerEnabled(tickerSettings.value.enabled ?? true);
     }
   }, [tickerSettings]);
+
+  useEffect(() => {
+    if (shopSettings?.value !== undefined) {
+      setShopComingSoon(shopSettings.value.coming_soon ?? false);
+    }
+  }, [shopSettings]);
 
   useEffect(() => {
     if (brandSettings?.value) {
@@ -83,19 +207,26 @@ const Settings = () => {
     }
   }, [socialsSettings]);
 
+  useEffect(() => {
+    if (layoutSettings?.value && Array.isArray(layoutSettings.value)) {
+      const savedLayout = layoutSettings.value;
+      const validSaved = savedLayout.filter(id => defaultLayout.includes(id));
+      const missing = defaultLayout.filter(id => !validSaved.includes(id));
+      setLayoutOrder([...validSaved, ...missing]);
+    } else {
+      setLayoutOrder(defaultLayout);
+    }
+  }, [layoutSettings]);
+
   const handleSave = async () => {
     setSaving(true);
     try {
       const newValue = {
         mode,
-        custom_image_url: customImageUrl || null,
-        background_type: bgType,
-        background_color: bgColor,
-        image_position: imagePosition,
-        hero_size: heroSize
+        mobile: mobileHero,
+        desktop: desktopHero
       };
 
-      // Try update first and select the result to verify
       const { data: heroUpdateData, error: updateError } = await supabase
         .from("site_settings")
         .update({ value: newValue, updated_at: new Date().toISOString() })
@@ -105,14 +236,12 @@ const Settings = () => {
       if (updateError) throw updateError;
 
       if (!heroUpdateData || heroUpdateData.length === 0) {
-        // Fallback: insert if row does not exist
         const { error: insertError } = await supabase
           .from("site_settings")
           .insert({ key: "homepage_hero", value: newValue });
         if (insertError) throw insertError;
       }
 
-      // Save ticker setting
       const newTickerValue = { enabled: tickerEnabled };
       const { data: tickerUpdateData, error: tickerUpdateError } = await supabase
         .from("site_settings")
@@ -129,7 +258,22 @@ const Settings = () => {
         if (insertError) throw insertError;
       }
 
-      // Save brand setting
+      const newShopValue = { coming_soon: shopComingSoon };
+      const { data: shopUpdateData, error: shopUpdateError } = await supabase
+        .from("site_settings")
+        .update({ value: newShopValue, updated_at: new Date().toISOString() })
+        .eq("key", "shop_settings")
+        .select();
+
+      if (shopUpdateError) throw shopUpdateError;
+
+      if (!shopUpdateData || shopUpdateData.length === 0) {
+        const { error: insertError } = await supabase
+          .from("site_settings")
+          .insert({ key: "shop_settings", value: newShopValue });
+        if (insertError) throw insertError;
+      }
+
       const newBrandValue = { logo_url: logoUrl || null };
       const { data: brandUpdateData, error: brandUpdateError } = await supabase
         .from("site_settings")
@@ -146,7 +290,6 @@ const Settings = () => {
         if (insertError) throw insertError;
       }
 
-      // Save socials setting
       const { data: socialsUpdateData, error: socialsUpdateError } = await supabase
         .from("site_settings")
         .update({ value: socials, updated_at: new Date().toISOString() })
@@ -162,9 +305,26 @@ const Settings = () => {
         if (insertError) throw insertError;
       }
 
+      const { data: layoutUpdateData, error: layoutUpdateError } = await supabase
+        .from("site_settings")
+        .update({ value: layoutOrder, updated_at: new Date().toISOString() })
+        .eq("key", "homepage_layout")
+        .select();
+
+      if (layoutUpdateError) throw layoutUpdateError;
+
+      if (!layoutUpdateData || layoutUpdateData.length === 0) {
+        const { error: insertError } = await supabase
+          .from("site_settings")
+          .insert({ key: "homepage_layout", value: layoutOrder });
+        if (insertError) throw insertError;
+      }
+
       toast.success("Settings updated successfully");
       refetchHero();
       refetchTicker();
+      refetchLayout();
+      refetchShop();
       refetchBrand();
       refetchSocials();
     } catch (error) {
@@ -175,73 +335,7 @@ const Settings = () => {
     }
   };
 
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `hero-bg-${Date.now()}.${fileExt}`;
-      const filePath = `hero/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('club-assets')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('club-assets')
-        .getPublicUrl(filePath);
-
-      setCustomImageUrl(publicUrl);
-      toast.success("Background image uploaded");
-    } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error("Failed to upload image");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Specifically check for PNG (allowed png files)
-    if (file.type !== "image/png") {
-      toast.error("Please upload a PNG logo for transparency support.");
-      return;
-    }
-
-    setUploadingLogo(true);
-    try {
-      const fileName = `branded-logo-${Date.now()}.png`;
-      const filePath = `branding/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('club-assets')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('club-assets')
-        .getPublicUrl(filePath);
-
-      setLogoUrl(publicUrl);
-      toast.success("Club logo uploaded successfully");
-    } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error("Failed to upload logo");
-    } finally {
-      setUploadingLogo(false);
-    }
-  };
-
-  if (isHeroLoading || isTickerLoading || isBrandLoading || isSocialsLoading) {
+  if (isHeroLoading || isTickerLoading || isBrandLoading || isSocialsLoading || isShopLoading || isLayoutLoading) {
     return (
       <div className="flex h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -266,7 +360,6 @@ const Settings = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          {/* Brand Identity Configuration */}
           <Card className="border-border/50 shadow-sm overflow-hidden bg-card">
             <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
               <div className="flex items-center gap-3">
@@ -283,67 +376,23 @@ const Settings = () => {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                   <div className="space-y-4">
                     <Label className="text-xs font-heading uppercase tracking-widest font-bold">Current Club Badge</Label>
-                    <div className="flex items-center justify-center p-8 bg-black rounded-xl border border-border aspect-square relative group overflow-hidden">
-                       {logoUrl ? (
-                         <img src={logoUrl} alt="Club Logo Preview" className="h-4/5 w-4/5 object-contain" />
-                       ) : (
-                         <div className="text-muted-foreground/30 font-heading text-xs uppercase text-center">No custom logo set</div>
-                       )}
-                       
-                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                          <label htmlFor="logo-upload" className="cursor-pointer">
-                             <Button variant="secondary" size="sm" className="text-xs h-8 h-8 pointer-events-none">
-                                Change
-                             </Button>
-                          </label>
-                          {logoUrl && (
-                            <Button variant="destructive" size="sm" onClick={() => setLogoUrl("")} className="text-xs h-8 h-8">
-                               Reset
-                            </Button>
-                          )}
-                       </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div className="space-y-2">
-                       <Label className="text-sm font-heading font-bold uppercase tracking-wider">Logo Guidelines</Label>
-                       <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-4 font-body">
-                          <li>Use high-resolution **PNG** files.</li>
-                          <li>Ensure the background is **transparent**.</li>
-                          <li>Square or circular aspect ratios work best.</li>
-                       </ul>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/20 rounded-xl p-8 hover:border-primary/40 transition-colors bg-muted/20">
-                         <Upload className="h-8 w-8 text-muted-foreground/40 mb-3" />
-                         <label htmlFor="logo-upload" className="relative cursor-pointer rounded-md font-bold text-primary hover:text-primary/80">
-                            <span className="text-sm">{uploadingLogo ? "Uploading..." : "Upload New Logo"}</span>
-                            <input id="logo-upload" name="logo-upload" type="file" className="sr-only" onChange={handleLogoUpload} disabled={uploadingLogo} accept="image/png" />
-                         </label>
-                         <p className="text-[10px] text-muted-foreground mt-1">PNG only for transparency.</p>
-                    </div>
-
-                    <div className="space-y-2 pt-2">
-                       <Label className="text-[10px] font-heading uppercase tracking-widest font-bold">Logo URL (External)</Label>
-                       <Input 
-                         placeholder="https://..." 
-                         value={logoUrl} 
-                         onChange={(e) => setLogoUrl(e.target.value)}
-                         className="font-body text-[11px] h-9"
-                       />
+                    <div className="grid gap-2">
+                      <ImageUpload 
+                        label="Club Logo (Saved to IONOS)"
+                        value={logoUrl}
+                        onChange={setLogoUrl}
+                      />
                     </div>
                   </div>
                </div>
             </CardContent>
           </Card>
 
-          {/* Hero Configuration */}
           <Card className="border-border/50 shadow-sm overflow-hidden bg-card">
             <CardHeader className="bg-muted/30 pb-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                  <Layout size={20} />
+                  <LayoutDashboard size={20} />
                 </div>
                 <div>
                   <CardTitle className="font-heading text-xl font-bold uppercase tracking-tight">Homepage Hero Mode</CardTitle>
@@ -361,7 +410,7 @@ const Settings = () => {
                   >
                     <LayoutDashboard className="mb-4 h-8 w-8 text-muted-foreground" />
                     <div className="text-center">
-                       <span className="font-heading text-sm font-bold block mb-1">MATCH ONLY</span>
+                       <span className="font-heading text-sm font-bold block mb-1 uppercase">Match Only</span>
                        <span className="text-[10px] text-muted-foreground leading-tight block">Next fixture & countdown timer.</span>
                     </div>
                   </Label>
@@ -375,7 +424,7 @@ const Settings = () => {
                   >
                     <Megaphone className="mb-4 h-8 w-8 text-muted-foreground" />
                     <div className="text-center">
-                       <span className="font-heading text-sm font-bold block mb-1">LATEST POSTS</span>
+                       <span className="font-heading text-sm font-bold block mb-1 uppercase">Latest Posts</span>
                        <span className="text-[10px] text-muted-foreground leading-tight block">Auto-sliding post carousel.</span>
                     </div>
                   </Label>
@@ -392,7 +441,7 @@ const Settings = () => {
                        <Megaphone className="h-6 w-6 text-muted-foreground/50" />
                     </div>
                     <div className="text-center">
-                       <span className="font-heading text-sm font-bold block mb-1">COMBINED</span>
+                       <span className="font-heading text-sm font-bold block mb-1 uppercase">Combined</span>
                        <span className="text-[10px] text-muted-foreground leading-tight block">Match first, then slides to posts.</span>
                     </div>
                   </Label>
@@ -401,7 +450,146 @@ const Settings = () => {
             </CardContent>
           </Card>
 
-          {/* Hero Height Configuration */}
+          <Card className="border-border/50 shadow-sm overflow-hidden bg-white">
+            <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <Layout size={20} />
+                </div>
+                <div>
+                  <CardTitle className="font-heading text-xl font-bold uppercase tracking-tight">Hero Customization</CardTitle>
+                  <CardDescription className="text-xs">Adjust layout and appearance for mobile and desktop independently.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+               <Tabs defaultValue="desktop" className="w-full">
+                 <div className="bg-muted/10 border-b border-border/40 px-8 py-2">
+                    <TabsList className="bg-transparent gap-4">
+                      <TabsTrigger value="mobile" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-heading text-[10px] uppercase tracking-widest gap-2">
+                        <Smartphone size={14} /> Mobile
+                      </TabsTrigger>
+                      <TabsTrigger value="desktop" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-heading text-[10px] uppercase tracking-widest gap-2">
+                        <Monitor size={14} /> Desktop
+                      </TabsTrigger>
+                    </TabsList>
+                 </div>
+                 
+                 {(["mobile", "desktop"] as const).map((device) => {
+                    const heroData = device === "mobile" ? mobileHero : desktopHero;
+                    const setHeroData = device === "mobile" ? setMobileHero : setDesktopHero;
+                    
+                    return (
+                      <TabsContent key={device} value={device} className="p-8 space-y-8 animate-in fade-in duration-300">
+                        <div className="space-y-4">
+                          <Label className="text-xs font-heading font-bold uppercase tracking-widest flex items-center gap-2">
+                            Hero Vertical Size <span className="text-[10px] text-muted-foreground lowercase font-normal italic">({device} only)</span>
+                          </Label>
+                          <RadioGroup 
+                            value={heroData.hero_size} 
+                            onValueChange={(v: any) => setHeroData(prev => ({ ...prev, hero_size: v }))} 
+                            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+                          >
+                            {(["compact", "standard", "large", "fullscreen"] as const).map((size) => (
+                              <div key={size}>
+                                <RadioGroupItem value={size} id={`${device}-size-${size}`} className="peer sr-only" />
+                                <Label
+                                  htmlFor={`${device}-size-${size}`}
+                                  className="flex flex-col items-center justify-center rounded-xl border-2 border-muted bg-popover py-4 px-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary transition-all cursor-pointer h-full"
+                                >
+                                  <span className="font-heading text-sm font-bold block mb-1 uppercase">{size}</span>
+                                </Label>
+                              </div>
+                            ))}
+                          </RadioGroup>
+                        </div>
+
+                        <div className="space-y-6 pt-4 border-t border-border/40">
+                          <RadioGroup 
+                            value={heroData.background_type} 
+                            onValueChange={(v: "image" | "color") => setHeroData(prev => ({ ...prev, background_type: v }))} 
+                            className="flex gap-6 mb-2"
+                          >
+                            <div className="flex items-center space-x-2">
+                               <RadioGroupItem value="image" id={`${device}-bg-image`} />
+                               <Label htmlFor={`${device}-bg-image`} className="font-heading uppercase tracking-widest text-sm cursor-pointer">Photo Background</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                               <RadioGroupItem value="color" id={`${device}-bg-color`} />
+                               <Label htmlFor={`${device}-bg-color`} className="font-heading uppercase tracking-widest text-sm cursor-pointer">Solid Color</Label>
+                            </div>
+                          </RadioGroup>
+
+                          {heroData.background_type === "color" && (
+                             <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                                <Label className="text-xs font-heading font-bold uppercase tracking-widest">Select Background Color</Label>
+                                <div className="flex flex-wrap items-center gap-4">
+                                   <Button 
+                                     variant={heroData.background_color === "#8e160b" ? "default" : "outline"} 
+                                     className="gap-2 font-heading uppercase tracking-widest text-[10px]" 
+                                     onClick={() => setHeroData(prev => ({ ...prev, background_color: "#8e160b" }))}
+                                   >
+                                      <div className="w-3 h-3 rounded-full bg-[#8e160b]" /> Whitehawk Red
+                                   </Button>
+                                   <Button 
+                                     variant={heroData.background_color === "#141b2b" ? "default" : "outline"} 
+                                     className="gap-2 font-heading uppercase tracking-widest text-[10px]" 
+                                     onClick={() => setHeroData(prev => ({ ...prev, background_color: "#141b2b" }))}
+                                   >
+                                      <div className="w-3 h-3 rounded-full bg-[#141b2b]" /> Club Black
+                                   </Button>
+                                   <div className="flex items-center gap-3 border border-border rounded-md px-3 py-1.5 h-10 bg-muted/20">
+                                      <span className="text-[10px] font-heading font-bold uppercase tracking-widest text-muted-foreground mt-0.5">Custom Hex:</span>
+                                      <input 
+                                        type="color" 
+                                        value={heroData.background_color} 
+                                        onChange={(e) => setHeroData(prev => ({ ...prev, background_color: e.target.value }))} 
+                                        className="w-6 h-6 p-0 border-0 rounded cursor-pointer bg-transparent shadow-none appearance-none" 
+                                      />
+                                   </div>
+                                </div>
+                             </div>
+                          )}
+
+                          {heroData.background_type === "image" && (
+                             <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
+                                <div className="grid gap-2">
+                                  <ImageUpload 
+                                    label="Custom Background (Saved to IONOS)"
+                                    value={heroData.custom_image_url || ""}
+                                    onChange={(url) => setHeroData(prev => ({ ...prev, custom_image_url: url }))}
+                                  />
+                                </div>
+
+                                <div className="space-y-4 pt-4 border-t border-border/40">
+                                  <div className="flex justify-between items-center">
+                                    <Label className="text-xs font-heading uppercase tracking-widest font-bold">Image Vertical Positioning</Label>
+                                    <span className="text-xs font-body text-muted-foreground">{heroData.image_position}%</span>
+                                  </div>
+                                  <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="100" 
+                                    value={heroData.image_position} 
+                                    onChange={(e) => setHeroData(prev => ({ ...prev, image_position: parseInt(e.target.value) }))}
+                                    className="w-full accent-[#8e160b]"
+                                  />
+                                  <div className="flex justify-between text-[10px] text-muted-foreground uppercase font-heading tracking-widest">
+                                    <span>Top</span>
+                                    <span>Center</span>
+                                    <span>Bottom</span>
+                                  </div>
+                                </div>
+                             </div>
+                          )}
+                        </div>
+                      </TabsContent>
+                    );
+                 })}
+               </Tabs>
+            </CardContent>
+          </Card>
+
           <Card className="border-border/50 shadow-sm overflow-hidden bg-card">
             <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
               <div className="flex items-center gap-3">
@@ -409,63 +597,22 @@ const Settings = () => {
                   <Layout size={20} />
                 </div>
                 <div>
-                  <CardTitle className="font-heading text-xl font-bold uppercase tracking-tight">Hero Size</CardTitle>
-                  <CardDescription className="text-xs">Adjust the overall height of the homepage hero section.</CardDescription>
+                  <CardTitle className="font-heading text-xl font-bold uppercase tracking-tight">Homepage Section Order</CardTitle>
+                  <CardDescription className="text-xs">Drag and drop to reorder sections on the public homepage.</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-8">
-              <RadioGroup value={heroSize} onValueChange={(v: "compact"|"standard"|"large"|"fullscreen") => setHeroSize(v)} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                <div>
-                  <RadioGroupItem value="compact" id="size-compact" className="peer sr-only" />
-                  <Label
-                    htmlFor="size-compact"
-                    className="flex flex-col items-center justify-center rounded-xl border-2 border-muted bg-popover py-4 px-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary transition-all cursor-pointer h-full"
-                  >
-                    <span className="font-heading text-sm font-bold block mb-1">COMPACT</span>
-                    <span className="text-[10px] text-muted-foreground">Shorter height</span>
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="standard" id="size-standard" className="peer sr-only" />
-                  <Label
-                    htmlFor="size-standard"
-                    className="flex flex-col items-center justify-center rounded-xl border-2 border-muted bg-popover py-4 px-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary transition-all cursor-pointer h-full"
-                  >
-                    <span className="font-heading text-sm font-bold block mb-1">STANDARD</span>
-                    <span className="text-[10px] text-muted-foreground">Default layout</span>
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="large" id="size-large" className="peer sr-only" />
-                  <Label
-                    htmlFor="size-large"
-                    className="flex flex-col items-center justify-center rounded-xl border-2 border-muted bg-popover py-4 px-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary transition-all cursor-pointer h-full"
-                  >
-                    <span className="font-heading text-sm font-bold block mb-1">LARGE</span>
-                    <span className="text-[10px] text-muted-foreground">Immersive tall</span>
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="fullscreen" id="size-fullscreen" className="peer sr-only" />
-                  <Label
-                    htmlFor="size-fullscreen"
-                    className="flex flex-col items-center justify-center rounded-xl border-2 border-muted bg-popover py-4 px-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary transition-all cursor-pointer h-full"
-                  >
-                    <span className="font-heading text-sm font-bold block mb-1">FULLSCREEN</span>
-                    <span className="text-[10px] text-muted-foreground">Takes full screen</span>
-                  </Label>
-                </div>
-
-              </RadioGroup>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndLayout} modifiers={[restrictToVerticalAxis]}>
+                <SortableContext items={layoutOrder} strategy={verticalListSortingStrategy}>
+                  {layoutOrder.map((id) => (
+                    <SortableSectionRow key={id} id={id} label={SECTION_LABELS[id] || id} />
+                  ))}
+                </SortableContext>
+              </DndContext>
             </CardContent>
           </Card>
 
-          {/* Global Components */}
           <Card className="border-border/50 shadow-sm overflow-hidden bg-card">
             <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
               <div className="flex items-center gap-3">
@@ -474,145 +621,34 @@ const Settings = () => {
                 </div>
                 <div>
                   <CardTitle className="font-heading text-xl font-bold uppercase tracking-tight">Global Components</CardTitle>
-                  <CardDescription className="text-xs">Toggle site-wide elements like the ticker bar.</CardDescription>
+                  <CardDescription className="text-xs">Toggle global design elements across the public site.</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-8">
-               <div className="flex items-center justify-between">
-                 <div className="space-y-1">
-                   <Label className="text-base font-heading font-bold uppercase tracking-wider">Fixtures Ticker Bar</Label>
-                   <p className="text-sm text-muted-foreground font-body">
-                     Displays the upcoming match and countdown in a scrolling ticker across the top of the site.
-                   </p>
-                 </div>
-                 <Switch 
-                   checked={tickerEnabled} 
-                   onCheckedChange={setTickerEnabled} 
-                 />
-               </div>
-            </CardContent>
-          </Card>
-
-          {/* Background Image Upload */}
-          <Card className="border-border/50 shadow-sm overflow-hidden bg-white">
-            <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                  <ImageIcon size={20} />
+            <CardContent className="p-8 space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-sm font-heading font-bold uppercase tracking-wider">Fixtures Ticker Bar</Label>
+                  <p className="text-xs text-muted-foreground font-body leading-tight">Shows next match and club shouts scrolling at the top.</p>
                 </div>
-                <div>
-                  <CardTitle className="font-heading text-xl font-bold uppercase tracking-tight">Hero Background</CardTitle>
-                  <CardDescription className="text-xs">Customize the background of the Match Hero section.</CardDescription>
-                </div>
+                <Switch 
+                  checked={tickerEnabled} 
+                  onCheckedChange={setTickerEnabled} 
+                />
               </div>
-            </CardHeader>
-            <CardContent className="p-8">
-               <div className="space-y-6">
-                  <RadioGroup value={bgType} onValueChange={(v: "image" | "color") => setBgType(v)} className="flex gap-6 mb-2 border-b border-border/40 pb-6">
-                    <div className="flex items-center space-x-2">
-                       <RadioGroupItem value="image" id="bg-image" />
-                       <Label htmlFor="bg-image" className="font-heading uppercase tracking-widest text-sm cursor-pointer">Layout Image</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                       <RadioGroupItem value="color" id="bg-color" />
-                       <Label htmlFor="bg-color" className="font-heading uppercase tracking-widest text-sm cursor-pointer">Solid Color</Label>
-                    </div>
-                  </RadioGroup>
 
-                  {bgType === "color" && (
-                     <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                        <Label className="text-xs font-heading font-bold uppercase tracking-widest">Select Background Color</Label>
-                        <div className="flex flex-wrap items-center gap-4">
-                           <Button 
-                             variant={bgColor === "#8e160b" ? "default" : "outline"} 
-                             className="gap-2 font-heading uppercase tracking-widest text-[10px]" 
-                             onClick={() => setBgColor("#8e160b")}
-                           >
-                              <div className="w-3 h-3 rounded-full bg-[#8e160b]" /> Whitehawk Red
-                           </Button>
-                           <Button 
-                             variant={bgColor === "#141b2b" ? "default" : "outline"} 
-                             className="gap-2 font-heading uppercase tracking-widest text-[10px]" 
-                             onClick={() => setBgColor("#141b2b")}
-                           >
-                              <div className="w-3 h-3 rounded-full bg-[#141b2b]" /> Club Black
-                           </Button>
-                           <div className="flex items-center gap-3 border border-border rounded-md px-3 py-1.5 h-10 bg-muted/20">
-                              <span className="text-[10px] font-heading font-bold uppercase tracking-widest text-muted-foreground mt-0.5">Custom Hex:</span>
-                              <input 
-                                type="color" 
-                                value={bgColor} 
-                                onChange={(e) => setBgColor(e.target.value)} 
-                                className="w-6 h-6 p-0 border-0 rounded cursor-pointer bg-transparent shadow-none appearance-none" 
-                              />
-                           </div>
-                        </div>
-                     </div>
-                  )}
-
-                  {bgType === "image" && (
-                     <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
-                        {customImageUrl && (
-                          <div className="relative aspect-video rounded-xl overflow-hidden border border-border group">
-                            <img src={customImageUrl} alt="Hero Preview" className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <Button variant="secondary" size="sm" onClick={() => setCustomImageUrl("")} className="text-xs font-heading">
-                                Remove Image
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/20 rounded-xl p-12 hover:border-primary/40 transition-colors bg-muted/20">
-                           <div className="text-center">
-                              <Upload className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
-                              <div className="flex text-sm text-muted-foreground">
-                                <label htmlFor="image-upload" className="relative cursor-pointer rounded-md font-bold text-primary hover:text-primary/80">
-                                  <span>{uploading ? "Uploading..." : "Upload a photo"}</span>
-                                  <input id="image-upload" name="image-upload" type="file" className="sr-only" onChange={handleImageUpload} disabled={uploading} accept="image/*" />
-                                </label>
-                                <p className="pl-1">or drag and drop</p>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-2">PNG, JPG, WEBP up to 5MB</p>
-                           </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label className="text-xs font-heading uppercase tracking-widest font-bold">Image URL (Optional Override)</Label>
-                          <Input 
-                            placeholder="https://example.com/image.jpg" 
-                            value={customImageUrl} 
-                            onChange={(e) => setCustomImageUrl(e.target.value)}
-                            className="font-body text-sm bg-muted/20"
-                          />
-                        </div>
-
-                        <div className="space-y-4 pt-4 border-t border-border/40">
-                          <div className="flex justify-between items-center">
-                            <Label className="text-xs font-heading uppercase tracking-widest font-bold">Image Vertical Positioning</Label>
-                            <span className="text-xs font-body text-muted-foreground">{imagePosition}%</span>
-                          </div>
-                          <input 
-                            type="range" 
-                            min="0" 
-                            max="100" 
-                            value={imagePosition} 
-                            onChange={(e) => setImagePosition(parseInt(e.target.value))}
-                            className="w-full accent-[#8e160b]"
-                          />
-                          <div className="flex justify-between text-[10px] text-muted-foreground uppercase font-heading tracking-widest">
-                            <span>Top</span>
-                            <span>Center</span>
-                            <span>Bottom</span>
-                          </div>
-                        </div>
-                     </div>
-                  )}
-               </div>
+              <div className="border-t border-border/40 pt-6 flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-sm font-heading font-bold uppercase tracking-wider">Shop Coming Soon</Label>
+                  <p className="text-xs text-muted-foreground font-body leading-tight">Enables a coming soon page overlay on the public shop page.</p>
+                </div>
+                <Switch 
+                  checked={shopComingSoon} 
+                  onCheckedChange={setShopComingSoon} 
+                />
+              </div>
             </CardContent>
           </Card>
-          {/* Social Media Links */}
           <Card className="border-border/50 shadow-sm overflow-hidden bg-card">
             <CardHeader className="bg-muted/30 pb-6 border-b border-border/50">
               <div className="flex items-center gap-3">

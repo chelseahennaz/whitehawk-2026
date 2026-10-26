@@ -13,28 +13,59 @@ import {
   User,
   ExternalLink,
   Settings,
-  Play
+  Play,
+  Shield,
+  Calendar,
+  ShoppingBag,
+  LayoutList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const AdminLayout = () => {
   const [session, setSession] = useState<any>(null);
+  const [adminUser, setAdminUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    const checkAdmin = async (currentSession: any) => {
+      if (!currentSession) {
+        setLoading(false);
+        navigate("/admin/login");
+        return;
+      }
+      
+      // Verify user is in admin_users table
+      const { data, error } = await supabase
+        .from("admin_users")
+        .select("*")
+        .eq("email", currentSession.user.email)
+        .single();
+        
+      if (error || !data) {
+        // Temporarily bypassing so you can log in and add yourself to Admin Users
+        console.error("Admin check failed", error);
+        // await supabase.auth.signOut();
+        // setSession(null);
+        // setLoading(false);
+        // navigate("/admin/login");
+        // return;
+      }
+      
+      setAdminUser(data);
+      setSession(currentSession);
       setLoading(false);
-      if (!session) navigate("/admin/login");
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      checkAdmin(session);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) navigate("/admin/login");
+      checkAdmin(session);
     });
 
     return () => subscription.unsubscribe();
@@ -52,12 +83,27 @@ const AdminLayout = () => {
   if (!session) return null;
 
   const menuItems = [
-    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { label: "News Posts", href: "/admin/posts", icon: FileText },
-    { label: "Squad", href: "/admin/squad", icon: Users },
-    { label: "Videos", href: "/admin/videos", icon: Play },
-    { label: "Sponsors", href: "/admin/sponsors", icon: Heart },
-    { label: "Settings", href: "/admin/settings", icon: Settings },
+    { label: "Dashboard", href: "/admin", icon: LayoutDashboard, roleKey: "dashboard" },
+    { label: "News Posts", href: "/admin/posts", icon: FileText, roleKey: "posts" },
+    { label: "Squad", href: "/admin/squad", icon: Users, roleKey: "squad" },
+    { label: "Personnel", href: "/admin/personnel", icon: Shield, roleKey: "personnel" },
+    { label: "Videos", href: "/admin/videos", icon: Play, roleKey: "videos" },
+    { label: "Sponsors", href: "/admin/sponsors", icon: Heart, roleKey: "sponsors" },
+    { label: "Fixtures", href: "/admin/fixtures", icon: Calendar, roleKey: "fixtures" },
+    { label: "Shop", href: "/admin/products", icon: ShoppingBag, roleKey: "shop" },
+    { label: "Settings", href: "/admin/settings", icon: Settings, roleKey: "settings" },
+    { label: "Menu Pages", href: "/admin/menu-pages", icon: LayoutList, roleKey: "settings" },
+    { label: "Admin Users", href: "/admin/users", icon: User, roleKey: "admin_users" },
+  ];
+
+  const hasAdminUsersRole = !adminUser?.roles || adminUser.roles.includes('admin_users');
+
+  const visibleMenuItems = [
+    ...menuItems.filter(item => 
+      !adminUser?.roles || adminUser.roles.includes(item.roleKey)
+    ),
+    // Always show My Account if Admin Users isn't already visible
+    ...(!hasAdminUsersRole ? [{ label: "My Account", href: "/admin/users", icon: User, roleKey: "" }] : []),
   ];
 
   return (
@@ -81,7 +127,7 @@ const AdminLayout = () => {
         <div className="p-6 flex items-center gap-3 border-b border-white/10">
           <div className="bg-white/10 p-1 rounded-full w-8 h-8 flex items-center justify-center border border-white/5 shadow-inner">
              <img 
-               src="https://whitehawkfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png" 
+               src="https://thehawksfc.com/wp-content/uploads/2023/04/cropped-twitter-badge-round.png" 
                alt="Whitehawk FC Logo" 
                className="w-full h-full object-contain"
              />
@@ -90,7 +136,7 @@ const AdminLayout = () => {
         </div>
 
         <nav className="mt-6 px-4 space-y-1">
-          {menuItems.map((item) => (
+          {visibleMenuItems.map((item) => (
             <Link
               key={item.href}
               to={item.href}

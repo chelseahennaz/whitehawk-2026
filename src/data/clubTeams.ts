@@ -33,7 +33,7 @@ export const clubTeams: ClubTeamInfo[] = [
     ],
     image: heroFans,
     clubUrl: "https://whitehawkfc.com/team/whitehawk-women/",
-    faUrl: "https://fulltime.thefa.com/displayTeam.html?divisionseason=87609080&teamID=854369197",
+    faUrl: "https://fulltime.thefa.com/table.html?league=5559379&selectedSeason=44984867&selectedDivision=36318434&selectedCompetition=0&selectedFixtureGroupKey=1_717953301",
   },
   {
     id: "u18",

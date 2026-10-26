@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import ReactQuill from "react-quill";
@@ -17,8 +17,11 @@ import {
   X,
   Type,
   Link as LinkIcon,
-  Globe
+  Globe,
+  ChevronUp,
+  ChevronDown
 } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { motion } from "framer-motion";
 
 const EditPost = () => {
@@ -26,9 +29,44 @@ const EditPost = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(!!id);
-  const [uploading, setUploading] = useState(false);
   const [existingCategories, setExistingCategories] = useState<string[]>(["News", "Match Report", "Men's Team", "Women's Team", "Youth", "Club"]);
   const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [imageOffset, setImageOffset] = useState(50);
+
+  // Refs for the Quill editor and the hidden image file input
+  const quillRef = useRef<ReactQuill>(null);
+  const imageFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Upload an image and insert it at the current cursor position in the editor
+  const uploadImageToQuill = useCallback(async (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error("Not authenticated.");
+      const response = await fetch("/upload.php", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok || !data.url) throw new Error(data.error || "Upload failed");
+      const editor = quillRef.current?.getEditor();
+      if (editor) {
+        const range = editor.getSelection(true);
+        editor.insertEmbed(range.index, "image", data.url);
+        editor.setSelection(range.index + 1, 0);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload image.");
+    }
+  }, []);
+
+
+  // Handler that fires when admin clicks the image button in Quill toolbar
+  const imageHandler = useCallback(() => {
+    imageFileInputRef.current?.click();
+  }, []);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -38,7 +76,9 @@ const EditPost = () => {
     category: "News",
     featured: false,
     image_url: "",
+    image_offset: 50,
     published_at: new Date().toISOString(),
+    status: "published",
   });
 
   useEffect(() => {
@@ -62,8 +102,11 @@ const EditPost = () => {
             category: data.category || "News",
             featured: data.featured || false,
             image_url: data.image_url || "",
+            image_offset: data.image_offset !== undefined && data.image_offset !== null ? data.image_offset : 50,
             published_at: data.published_at || data.created_at,
+            status: data.status || "published",
           });
+          setImageOffset(data.image_offset !== undefined && data.image_offset !== null ? data.image_offset : 50);
         }
         setFetching(false);
       };
@@ -101,41 +144,14 @@ const EditPost = () => {
     }));
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    setUploading(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `post-headers/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("news-images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("news-images")
-        .getPublicUrl(filePath);
-
-      setFormData(prev => ({ ...prev, image_url: publicUrl }));
-      toast.success("Image uploaded successfully");
-    } catch (error: any) {
-      toast.error(error.message || "Upload failed");
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      let finalFormData = { ...formData };
+      let finalFormData = { ...formData, image_offset: imageOffset };
 
       // Handle slug de-duplication for NEW posts
       if (!id) {
@@ -184,13 +200,18 @@ const EditPost = () => {
   };
 
   const quillModules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "blockquote", "code-block"],
-      ["clean"],
-    ],
+    toolbar: {
+      container: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "image", "blockquote", "code-block"],
+        ["clean"],
+      ],
+      handlers: {
+        image: imageHandler,
+      },
+    },
   };
 
   if (fetching) {
@@ -261,7 +282,20 @@ const EditPost = () => {
               Article Body
             </div>
             <div className="p-0 post-editor">
+              {/* Hidden file input for inline image uploads */}
+              <input
+                type="file"
+                ref={imageFileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) uploadImageToQuill(file);
+                  e.target.value = "";
+                }}
+              />
                <ReactQuill
+                ref={quillRef}
                 theme="snow"
                 value={formData.body}
                 onChange={(content) => setFormData(p => ({ ...p, body: content }))}
@@ -288,6 +322,18 @@ const EditPost = () => {
                     className="border-primary data-[state=checked]:bg-primary"
                   />
                   <Label htmlFor="featured" className="text-sm font-medium cursor-pointer">Post to Featured Section</Label>
+               </div>
+
+               <div className="space-y-2">
+                 <Label className="text-[10px] uppercase tracking-widest font-heading text-muted-foreground">Status</Label>
+                 <select 
+                    value={formData.status}
+                    onChange={(e) => setFormData(p => ({ ...p, status: e.target.value }))}
+                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-xs focus:ring-1 focus:ring-primary focus:outline-none font-heading uppercase"
+                 >
+                    <option value="published">Published</option>
+                    <option value="draft">Draft</option>
+                 </select>
                </div>
 
                <div className="space-y-2">
@@ -353,7 +399,7 @@ const EditPost = () => {
               className="w-full font-heading uppercase tracking-widest text-xs h-11 gap-2"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save size={16} />}
-              {id ? "Update Post" : "Publish Post"}
+              {id ? "Update Post" : formData.status === "draft" ? "Save Draft" : "Publish Post"}
             </Button>
           </div>
 
@@ -361,33 +407,77 @@ const EditPost = () => {
           <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-4">
             <h3 className="font-heading text-xs font-bold uppercase tracking-widest pb-3 border-b border-border mb-4">Featured Image</h3>
             
-            <div className="relative group">
-              {formData.image_url ? (
-                <div className="relative aspect-video rounded-lg overflow-hidden border border-border">
-                  <img src={formData.image_url} alt="Featured" className="w-full h-full object-cover" />
-                  <button 
-                    onClick={() => setFormData(p => ({ ...p, image_url: "" }))}
-                    className="absolute top-2 right-2 bg-black/60 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X size={14} />
-                  </button>
+            <div className="grid gap-2">
+              <ImageUpload 
+                label="Article Header (Saved to IONOS)"
+                value={formData.image_url}
+                onChange={(url) => {
+                  setFormData(prev => ({ ...prev, image_url: url, image_offset: 50 }));
+                  setImageOffset(50);
+                }}
+              />
+              {formData.image_url && (
+                <div className="mt-2 space-y-3">
+                  <div className="relative h-32 w-full overflow-hidden rounded-md border border-border">
+                    <img 
+                      src={formData.image_url} 
+                      alt="Preview" 
+                      className="absolute inset-0 w-full h-full object-cover"
+                      style={{ objectPosition: `center ${imageOffset}%` }}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[10px] text-muted-foreground uppercase tracking-wider font-heading font-medium">
+                      <span>Top of image</span>
+                      <span>Center ({imageOffset}%)</span>
+                      <span>Bottom of image</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 shrink-0" 
+                        onClick={() => {
+                          const newVal = Math.max(imageOffset - 5, 0);
+                          setImageOffset(newVal);
+                          setFormData(p => ({ ...p, image_offset: newVal }));
+                        }}
+                      >
+                        <ChevronUp size={14} />
+                      </Button>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="100" 
+                        value={imageOffset} 
+                        onChange={(e) => {
+                          const newVal = parseInt(e.target.value);
+                          setImageOffset(newVal);
+                          setFormData(p => ({ ...p, image_offset: newVal }));
+                        }}
+                        className="w-full accent-primary h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer"
+                      />
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 shrink-0" 
+                        onClick={() => {
+                          const newVal = Math.min(imageOffset + 5, 100);
+                          setImageOffset(newVal);
+                          setFormData(p => ({ ...p, image_offset: newVal }));
+                        }}
+                      >
+                        <ChevronDown size={14} />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/30 transition-all cursor-pointer">
-                  {uploading ? (
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  ) : (
-                    <>
-                      <ImageIcon className="text-muted-foreground mb-2" size={32} />
-                      <span className="text-[10px] font-heading uppercase text-muted-foreground">Select Image</span>
-                    </>
-                  )}
-                  <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-                </label>
               )}
             </div>
             <p className="text-[10px] text-muted-foreground leading-relaxed italic">
-              Images will be automatically hosted on Supabase Storage. Recommended size: 1200x600.
+              Images will be automatically hosted on your IONOS server. Recommended size: 1200x600.
             </p>
           </div>
         </div>
@@ -409,6 +499,12 @@ const EditPost = () => {
         }
         .post-editor .ql-container.ql-snow {
           border: none;
+        }
+        .post-editor .ql-editor img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 6px;
+          margin: 8px 0;
         }
       `}</style>
     </div>
